@@ -1,0 +1,14 @@
+.dropdown button {
+  padding: 0;
+  margin: 0;
+  background: none;
+  background-color: transparent !important;
+  border-color: transparent;
+}
+
+.dropdown button:hover,
+.dropdown button:active,
+.dropdown button:focus,
+.show > .dropdown button.dropdown-toggle {
+  border-color: transparent;
+}

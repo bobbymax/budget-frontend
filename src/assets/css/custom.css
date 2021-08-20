@@ -1,0 +1,23 @@
+/*
+  *
+  * Card Styles
+  */
+
+.portal-card,
+.form-portal-card {
+  border-radius: 15px;
+  box-shadow: 2px 4px #c4c3c3;
+}
+
+.form-portal-card {
+  padding: 25px;
+}
+
+a.nav-sub-link.active {
+  margin: 0 !important;
+}
+
+.batchCart {
+  padding-left: 15px;
+  border-left: 1px solid #c4c3c3;
+}

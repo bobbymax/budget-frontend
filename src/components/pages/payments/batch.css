@@ -1,0 +1,101 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@100;300;400&display=swap");
+
+#batch {
+  padding: 30px;
+}
+
+.outer {
+  border: 1px solid #556;
+  width: 728px;
+  padding-bottom: 30px;
+  background-image: url("../../../assets/images/nack.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.brandSection {
+  padding: 7px 0 10px 0;
+  /* border-bottom: 3px solid #028a0e; */
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.batch-logo {
+  width: 97%;
+}
+
+.header-topper {
+  margin-bottom: 0;
+  text-align: left !important;
+  margin-left: 20px;
+  font-size: 16px;
+  line-height: 2.8em;
+  font-weight: bolder;
+}
+
+.top-header-name {
+  /* font-family: "Open Sans", sans-serif !important; */
+  font-family: "Roboto", sans-serif !important;
+  color: rgb(184, 42, 65);
+  text-align: left !important;
+  margin: 10px 0 0 20px;
+  font-weight: bolder;
+}
+
+.content-wrap {
+  margin-left: 20px;
+}
+
+.boax-enter {
+  border: 1px solid #777;
+  padding: 6px;
+  margin-right: 20px;
+}
+
+.aligner {
+  line-height: 2.2em;
+}
+
+.approval-bar {
+  background-color: rgb(41, 117, 92);
+  margin-right: 20px;
+  margin-top: 20px;
+  padding: 3px 0 0 15px;
+  color: aliceblue;
+}
+
+#top-headers-table {
+  background-color: rgb(178, 231, 245);
+}
+
+.approval-bar h4 {
+  line-height: 2.5em;
+}
+
+.signatures {
+  margin-top: 30px;
+}
+
+.signatures h6 {
+  font-size: 15px;
+}
+
+.staff-list {
+  margin-right: 20px;
+  margin-top: 15px;
+}
+
+.signature-lines {
+  display: block;
+  border-bottom: 1px dashed #777;
+  margin-right: 20px;
+  margin-top: 12px;
+}
+
+.grandTotal {
+  text-align: center;
+  border: 1px solid #777;
+  padding-top: 8px;
+  font-weight: bolder;
+}

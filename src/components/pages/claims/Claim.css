@@ -1,0 +1,46 @@
+.lefters {
+  float: left;
+}
+
+.righters {
+  float: right;
+}
+
+.clearfix {
+  clear: both;
+}
+
+.rowConts .keepers {
+  width: 31%;
+  text-align: center;
+  margin-right: 16px;
+}
+.rowConts {
+  margin-bottom: 20px;
+}
+.rowConts .keepers:last-child {
+  margin-right: 0;
+}
+
+.liners {
+  border-bottom: 1px solid #777;
+}
+.claimTitle {
+  color: #028a0e;
+}
+.table td:first-child,
+.table th:first-child {
+  border-left: 0 !important;
+}
+
+.table td:last-child,
+.table th:last-child {
+  border-right: 0 !important;
+}
+
+.claimBackground {
+  background-image: url("../../../assets/images/nack.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
