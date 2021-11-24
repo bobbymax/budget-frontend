@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { store, update } from "../../../redux/actions"
-import * as broadcast from '../../../redux/accessControl/types'
+// import * as broadcast from '../../../redux/accessControl/types'
+import { FormControl, Grid, InputLabel, MenuItem, Select, TextField, ButtonGroup, Button } from '@material-ui/core'
+import Requests from '../../../services/classes/Requests'
 
 const Department = (props) => {
 
@@ -17,6 +19,7 @@ const Department = (props) => {
 
     const [state, setState] = useState(defaultState)
     const [actionType, setActionType] = useState("")
+    const [departments, setDepartments] = useState([])
 
     const departmentTypes = [
         {label : "Directorate", value: "directorate"},
@@ -34,11 +37,19 @@ const Department = (props) => {
             type: state.type
         }
 
-        props.store('departments', data, {
-            success: broadcast.CREATE_DEPARTMENT_RECORD,
-            failed: broadcast.CREATE_DEPARTMENT_RECORD_FAILED
+        Requests.store('departments', data)
+        .then(res => {
+            props.history.push({
+                pathname: '/departments',
+                state: {
+                    department: res.data.data,
+                    status: 'created'
+                }
+            })
         })
-        props.history.push('/departments')
+        .catch(err => {
+            console.log(err)
+        })
     }
 
     const handleUpdate = (e) => {
@@ -51,12 +62,30 @@ const Department = (props) => {
             type: state.type
         }
 
-        props.update('departments', state.id, data, {
-            success: broadcast.UPDATE_DEPARTMENT_RECORD,
-            failed: broadcast.UPDATE_DEPARTMENT_RECORD_FAILED
+        Requests.update('departments', state.id, data)
+        .then(res => {
+            props.history.push({
+                pathname: '/departments',
+                state: {
+                    department: res.data.data,
+                    status: 'updated'
+                }
+            })
         })
-        props.history.push('/departments')
+        .catch(err => {
+            console.log(err)
+        })
     }
+
+    useEffect(() => {
+        Requests.index('departments')
+        .then(res => {
+            setDepartments(res.data.data)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }, [])
 
     useEffect(() => {
         if(props.location && props.location.state) {
@@ -73,6 +102,8 @@ const Department = (props) => {
             })
 
             setActionType(typer)
+
+            // debugger
         }
     }, [props.location])
 
@@ -80,79 +111,85 @@ const Department = (props) => {
         <>
             <h1>{ actionType ? "Update" : "Add" } Department</h1>
 
-            <div className="card form-portal-card" style={{ marginTop: 30 }}>
-            <form onSubmit={ actionType ? handleUpdate : handleSubmit}>
-                <div className="row">
-                    <div className="col-md-8 mb-3">
-                        <div className="form-group">
-                            <label className="mb-3">Name</label>
-                            <input 
-                                type="text"
-                                name="name"
-                                className="form-control"
-                                placeholder="Enter Department Name"
-                                value={state.name}
-                                onChange={(e) => setState({...state, name: e.target.value})}
-                            />
-                        </div>
-                    </div>
-                    <div className="col-md-4 mb-3">
-                        <div className="form-group">
-                            <label className="mb-3">Code</label>
-                            <input 
-                                type="text"
-                                name="code"
-                                className="form-control"
-                                placeholder="Enter Code"
-                                value={state.code}
-                                onChange={(e) => setState({...state, code: e.target.value})}
-                            />
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label className="mb-3">Type</label>
-                            <select 
-                                name="type" 
-                                className="form-control"
+            <form onSubmit={ actionType ? handleUpdate : handleSubmit} style={{ marginTop: 30 }}>
+                <Grid container spacing={3}>
+                    <Grid item md={8}>
+                        <TextField 
+                            variant="outlined"
+                            label="Department Name"
+                            value={state.name}
+                            onChange={(e) => setState({...state, name: e.target.value})}
+                            fullWidth
+                            required
+                        />
+                    </Grid>
+                    <Grid item md={4}>
+                        <TextField 
+                            variant="outlined"
+                            label="Department Code"
+                            value={state.code}
+                            onChange={(e) => setState({...state, code: e.target.value})}
+                            fullWidth
+                            required
+                        />
+                    </Grid>
+                    <Grid item md={6}>
+                        <FormControl variant="outlined" style={{ minWidth: '100%' }}>
+                            <InputLabel id="department_type">Department Type</InputLabel>
+                            <Select
+                                labelId="departmentTypeLabel"
+                                id="department_type"
                                 value={state.type}
                                 onChange={(e) => setState({...state, type: e.target.value})}
+                                label="Department Type"
+                                required
                             >
-                                <option value="">Select Type</option>
+                                <MenuItem value=""><em>Select Department Type</em></MenuItem>
                                 {departmentTypes.map((deptType, i) => (
-                                    <option key={i} value={deptType.value}>{deptType.label}</option>
+                                    <MenuItem key={i} value={deptType.value}>{deptType.label}</MenuItem>
                                 ))}
-
-                            </select>
-                        </div>
-                    </div>
-                    <div className="col-md-6 mb-5">
-                        <div className="form-group">
-                            <label className="mb-3">Parent</label>
-                            <select 
-                                name="parentId" 
-                                className="form-control"
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item md={6}>
+                        <FormControl variant="outlined" style={{ minWidth: '100%' }}>
+                            <InputLabel id="department_parent">Department Parent</InputLabel>
+                            <Select
+                                labelId="departmentParentLabel"
+                                id="department_parent"
                                 value={state.parentId}
                                 onChange={(e) => setState({...state, parentId: e.target.value})}
+                                label="Department Parent"
+                                required
                             >
-                                <option value="">Select Parent</option>
-                                <option value="0">None</option>
-
-                                {props.departments.collection.length !== 0 ? props.departments.collection.map((department, i) => (
-                                    <option key={i} value={department.id}>{department.name}</option>
-                                )) : null}
-
-                            </select>
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <button type="submit" className="btn btn-success">
-                            {actionType ? 'Update' : 'Create'} Department
-                        </button>
-                    </div>
-                </div>
+                                <MenuItem value="0"><em>None</em></MenuItem>
+                                {departments.map((department, i) => (
+                                    <MenuItem key={i} value={department.id}>{department.name}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item md={12}>
+                        <ButtonGroup>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                disabled={state.name === "" || state.code === ""}
+                            >
+                                {actionType ? 'Update' : 'Create'} Department
+                            </Button>
+                            <Button
+                                type="reset"
+                                variant="contained"
+                                color="secondary"
+                            >
+                                Cancel
+                            </Button>
+                        </ButtonGroup>
+                    </Grid>
+                </Grid>
             </form>
-            </div>
         </>
     )
 }

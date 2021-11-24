@@ -1,5 +1,16 @@
-import { useState } from 'react'
-import { Modal, Button, Form, Container, Row, Col } from 'react-bootstrap'
+import React, { useState } from 'react'
+import { Modal, Form } from 'react-bootstrap'
+import { 
+    FormControl, 
+    Grid, 
+    InputLabel, 
+    Select, 
+    TextField, 
+    Typography, 
+    MenuItem,
+    ButtonGroup,
+    Button
+} from '@material-ui/core'
 
 const AddRole = (props) => {
 
@@ -46,90 +57,129 @@ const AddRole = (props) => {
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header>
                         <Modal.Title id="contained-modal-title-vcenter">
-                            Add Role
+                            <Typography
+                                variant="h5"
+                                component="h2"
+                                color="primary"
+                            >
+                                Add Role
+                            </Typography>
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Container fluid>
-                            <Row>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Role Name</Form.Label>
-                                        <Form.Control 
-                                            type="text" 
-                                            name="name"
-                                            placeholder="Enter Role Name"
-                                            value={state.name}
-                                            onChange={(e) => setState({...state, name: e.target.value})}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Maximum Number of Slots</Form.Label>
-                                        <Form.Control 
-                                            type="number" 
-                                            name="max_slots" 
-                                            placeholder="Enter Max Slots"
-                                            value={state.max_slots}
-                                            onChange={(e) => setState({...state, max_slots: e.target.value})}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Authorization</Form.Label>
-                                        <Form.Control 
-                                            as="select" 
-                                            name="isSuper"
-                                            value={state.isSuper}
-                                            onChange={(e) => setState({ ...state, isSuper: e.target.value })}
-                                        >
-                                            <option value="">Select Role Level</option>
-                                            {adminOptions.map((option, i) => (
-                                                <option key={i} value={option.value}>{option.label}</option>
-                                            ))}
-                                        </Form.Control>
-                                    </Form.Group>
-                                </Col>
-                                <Col md={6} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Start Date</Form.Label>
-                                        <Form.Control 
-                                            type="date"
-                                            name="start_date"
-                                            value={state.start_date}
-                                            onChange={(e) => setState({...state, start_date: e.target.value})}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={6} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Expiry Date</Form.Label>
-                                        <Form.Control 
-                                            type="date"
-                                            name="expiry_date"
-                                            value={state.expiry_date}
-                                            onChange={(e) => setState({...state, expiry_date: e.target.value})}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={8}>
-                                    <Form.Check 
-                                        type="checkbox"
-                                        name="cannot_expire"
-                                        label="Cannot Expire"
+                        <Grid container spacing={3}>
+                            <Grid item md={4}>
+                                <TextField 
+                                    variant="outlined"
+                                    value={state.name}
+                                    onChange={(e) => setState({...state, name: e.target.value})}
+                                    label="Role Name"
+                                    // helperText="Enter Role Name Here"
+                                    fullWidth
+                                    required
+                                    // error
+                                />
+                            </Grid>
+                            <Grid item md={4}>
+                                <TextField 
+                                    variant="outlined"
+                                    value={state.max_slots}
+                                    onChange={(e) => setState({...state, max_slots: e.target.value})}
+                                    label="Maximum Slots"
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
+                            <Grid item md={4}>
+                                <FormControl variant="outlined" style={{ minWidth: '100%' }}>
+                                    <InputLabel id="authorization">Authorization</InputLabel>
+                                    <Select
+                                        labelId="authorizationLabel"
+                                        id="authorization"
+                                        value={state.isSuper}
+                                        onChange={(e) => setState({ ...state, isSuper: e.target.value })}
+                                        label="Authorization"
+                                        required
+                                    >
+                                        <MenuItem value="0">
+                                            <em>Select Role Level</em>
+                                        </MenuItem>
+                                        {adminOptions.map((option, i) => (
+                                            <MenuItem key={i} value={option.value}>{option.label}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+
+                            <Grid item md={6}>
+                                <TextField 
+                                    variant="outlined"
+                                    id="start-date"
+                                    label="Start Date"
+                                    type="date"
+                                    value={state.start_date}
+                                    onChange={(e) => setState({...state, start_date: e.target.value})}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
+
+                            <Grid item md={6}>
+                                <TextField 
+                                    variant="outlined"
+                                    id="expiry-date"
+                                    label="Expiry Date"
+                                    type="date"
+                                    value={state.expiry_date}
+                                    onChange={(e) => setState({...state, expiry_date: e.target.value})}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item md={12} style={{ marginTop: 10 }}>
+                                <FormControl variant="outlined" style={{ minWidth: '100%' }}>
+                                    <InputLabel id="authorization">Can Role Expire</InputLabel>
+                                    <Select
+                                        labelId="cannotExpireLabel"
+                                        id="cannot-expire"
                                         value={state.cannot_expire}
-                                        defaultChecked={state.cannot_expire ? true : false}
                                         onChange={(e) => setState({...state, cannot_expire: e.target.value})}
-                                    />
-                                </Col>
-                            </Row>
-                        </Container>
+                                        label="Cannot Expire"
+                                        required
+                                    >
+                                        <MenuItem value="0" disabled>
+                                            <em>Can Role Expire?</em>
+                                        </MenuItem>
+                                        <MenuItem value={true}><em>Yes</em></MenuItem>
+                                        <MenuItem value={false}><em>No</em></MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        </Grid>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="success" type="submit">Submit</Button>
-                        <Button variant="danger" onClick={props.onHide}>Close</Button>
+                        <ButtonGroup>
+                            <Button 
+                                variant="contained" 
+                                type="submit" 
+                                color="primary"
+                                disabled={state.name === "" || state.max_slots === "" || state.isSuper === "" || state.start_date === "" }
+                            >
+                                Submit
+                            </Button>
+                            <Button 
+                                variant="contained" 
+                                color="secondary" 
+                                onClick={props.onHide}
+                            >
+                                Close
+                            </Button>
+                        </ButtonGroup>
                     </Modal.Footer>
                 </Form>
             </Modal>

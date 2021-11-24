@@ -1,10 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useEffect, useState} from 'react'
-import { store, update } from "../../../redux/actions"
-import * as broadcast from '../../../redux/accessControl/types'
-import { Container, Row, Col, Form, Button } from 'react-bootstrap'
-import { FiSend } from 'react-icons/fi'
-import { connect } from 'react-redux'
+import { FormControl, Grid, InputLabel, MenuItem, Select, TextField, ButtonGroup, Button, Typography } from '@material-ui/core'
+import Requests from '../../../services/classes/Requests'
 
 const Group = (props) => {
 
@@ -38,11 +35,17 @@ const Group = (props) => {
             cannot_expire: state.cannot_expire
         }
 
-        props.store('groups', data, {
-            success: broadcast.CREATE_GROUP_RECORD,
-            failed: broadcast.CREATE_GROUP_RECORD_FAILED
+        Requests.store('groups', data)
+        .then(res => {
+            props.history.push({
+                pathname: '/groups',
+                state: {
+                    group: res.data.data,
+                    status: "created"
+                }
+            })
         })
-        props.history.push('/groups')
+        .catch(err => console.log(err))
     }
 
     const handleUpdate = (e) => {
@@ -56,11 +59,17 @@ const Group = (props) => {
             cannot_expire: state.cannot_expire
         }
 
-        props.update('groups', state.id, data, {
-            success: broadcast.UPDATE_GROUP_RECORD,
-            failed: broadcast.UPDATE_GROUP_RECORD_FAILED
+        Requests.update('groups', state.id, data)
+        .then(res => {
+            props.history.push({
+                pathname: '/groups',
+                state: {
+                    group: res.data.data,
+                    status: "updated"
+                }
+            })
         })
-        props.history.push('/groups')
+        .catch(err => console.log(err))
     }
 
     useEffect(() => {
@@ -85,110 +94,103 @@ const Group = (props) => {
 
     return (
         <>
-            <Container fluid>
-                <Row>
-                    <Col>
-                        <h3 className="mb-5">{ actionType ? 'Update' : 'Create' } Group</h3>
-                    </Col>
-                </Row>
-            </Container>
-            <div className="card form-portal-card">
-                <Container fluid>
-                    <Row>
-                        <Col>
-                            <Form onSubmit={ actionType ? handleUpdate : handleSubmit}>
-                            <Row>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Group Name</Form.Label>
-                                        <Form.Control 
-                                            type="text" 
-                                            name="name"
-                                            placeholder="Enter Group Name"
-                                            value={state.name}
-                                            onChange={(e) => { setState({...state, name: e.target.value}) } }
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Maximum Number of Slots</Form.Label>
-                                        <Form.Control 
-                                            type="number" 
-                                            name="max_slots" 
-                                            placeholder="Enter Max Slots"
-                                            value={state.max_slots}
-                                            onChange={(e) => { setState({...state, max_slots: e.target.value}) } }
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Start Date</Form.Label>
-                                        <Form.Control 
-                                            type="date"
-                                            name="start_date"
-                                            value={state.start_date}
-                                            onChange={(e) => { setState({...state, start_date: e.target.value}) } }
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={6} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Expiry Date</Form.Label>
-                                        <Form.Control 
-                                            type="date"
-                                            name="expiry_date"
-                                            value={state.expiry_date}
-                                            onChange={(e) => { setState({...state, expiry_date: e.target.value}) } }
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={6} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Cannot Expire?</Form.Label>
-                                        <Form.Control 
-                                            as="select" 
-                                            name="cannot_expire"
-                                            value={state.cannot_expire}
-                                            onChange={(e) => { setState({...state, cannot_expire: e.target.value}) } }
-                                        >
-                                            <option value="">Group cannot Expire?</option>
-                                            {expiryDates.map((option, i) => (
-                                                <option key={i} value={option.value}>{option.label}</option>
-                                            ))}
-                                        </Form.Control>
-                                    </Form.Group>
-                                </Col>
+            <Typography
+                variant="h4"
+                component="h2"
+                style={{ marginBottom: 30 }}
+            >
+                { actionType ? 'Update' : 'Create' } Group
+            </Typography>
+            <form onSubmit={ actionType ? handleUpdate : handleSubmit}>
+                <Grid container spacing={3}>
+                    <Grid item md={8}>
+                        <TextField
+                            variant="outlined"
+                            label="Group Name"
+                            value={state.name}
+                            onChange={(e) => { setState({...state, name: e.target.value}) } }
+                            fullWidth
+                            required
+                        />
+                    </Grid>
+                    <Grid item md={4}>
+                        <TextField
+                            variant="outlined"
+                            label="Enter Max Slots"
+                            value={state.max_slots}
+                            onChange={(e) => { setState({...state, max_slots: e.target.value}) } }
+                            fullWidth
+                            required
+                        />
+                    </Grid>
+                    <Grid item md={4}>
+                        <TextField
+                            variant="outlined"
+                            type="date"
+                            label="Start Date"
+                            value={state.start_date}
+                            onChange={(e) => { setState({...state, start_date: e.target.value}) } }
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            fullWidth
+                            required
+                        />
+                    </Grid>
+                    <Grid item md={4}>
+                        <TextField
+                            variant="outlined"
+                            type="date"
+                            label="Expiry Date"
+                            value={state.expiry_date}
+                            onChange={(e) => { setState({...state, expiry_date: e.target.value}) } }
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            disabled={state.cannot_expire === 1}
+                            fullWidth
+                            required
+                        />
+                    </Grid>
 
-                                <Col>
-                                    <Button variant="success" type="submit">
-                                        <FiSend style={{ marginRight: 8 }}/>
-                                        { actionType ? 'Update' : 'Create' } Group
-                                    </Button>
-                                </Col>
-                            </Row>
-                            </Form>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
+                    <Grid item md={4}>
+                        <FormControl variant="outlined" style={{ minWidth: '100%' }}>
+                            <InputLabel id="expiration">Cannot Expire?</InputLabel>
+                            <Select
+                                labelId="expirationLabel"
+                                id="expiration"
+                                value={state.cannot_expire}
+                                onChange={(e) => { setState({...state, cannot_expire: e.target.value}) } }
+                                label="Cannot Expire?"
+                                required
+                            >
+                                <MenuItem value="" disabled><em>Group cannot Expire?</em></MenuItem>
+                                {expiryDates.map((option, i) => (
+                                    <MenuItem key={i} value={option.value}>{option.label}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item md={12}>
+                        <ButtonGroup
+                            variant="contained"
+                        >
+                            <Button color="primary" type="submit">
+                                { actionType ? 'Update' : 'Create' } Group
+                            </Button>
+                            <Button 
+                                color="secondary"
+                                onClick={() => props.history.push('/groups')}
+                            >
+                                Cancel
+                            </Button>
+                        </ButtonGroup>
+                    </Grid>
+                </Grid>
+            </form>
         </>
     )
 }
 
-const mapStateToProps = state => ({
-    groups: state.access.groups
-})
-
-const mapDispatchToProps = dispatch => {
-    return {
-        store: (entity, data, broadcast) => dispatch(store(entity, data, broadcast)),
-        update: (entity, id, data, broadcast) => dispatch(update(entity, id, data, broadcast))
-    }
-}
-
-export default connect(
-    mapStateToProps, 
-    mapDispatchToProps
-)(Group)
+export default Group

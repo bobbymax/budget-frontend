@@ -7,7 +7,7 @@ import * as broadcast from '../../../redux/accessControl/types'
 import ClaimWidget from '../../widgets/ClaimWidget'
 import { FiPlus, FiSave, FiX } from 'react-icons/fi'
 
-export const Claims = (props) => {
+const Claims = (props) => {
 
     const auth = props.auth
 

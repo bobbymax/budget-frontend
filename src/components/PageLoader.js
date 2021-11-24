@@ -1,6 +1,6 @@
 import React from 'react'
 
-const TableWidget = ({item}) => {
+const PageLoader = () => {
     return (
         <>
             
@@ -8,4 +8,4 @@ const TableWidget = ({item}) => {
     )
 }
 
-export default TableWidget
+export default PageLoader

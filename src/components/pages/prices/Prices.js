@@ -2,14 +2,17 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { FiPlus } from 'react-icons/fi'
-import {
-    Row,
-    Col,
-    Table
-} from 'react-bootstrap'
 import { destroy, index, store, update } from '../../../redux/actions'
 import * as broadcast from '../../../redux/entitlements/types'
-import PriceWidget from '../../widgets/PriceWidget'
+import { FormControl, Grid, InputLabel, MenuItem, Select, TextField, Button, ButtonGroup, makeStyles } from '@material-ui/core'
+import TableComponent from '../../../widgets/components/TableComponent'
+
+
+const useStyles = makeStyles(theme => ({
+    formControl: {
+        minWidth: '100%',
+    }
+}))
 
 export const Prices = (props) => {
 
@@ -23,6 +26,18 @@ export const Prices = (props) => {
     }
 
     const [state, setState] = useState(initialState)
+    const classes = useStyles()
+
+    const columns = [
+        {
+            name: 'Benefit',
+            label: 'benefit_name'
+        },
+        {
+            name: 'Amount',
+            label: 'amount'
+        }
+    ]
 
     const handleSubmit = e => {
         e.preventDefault()
@@ -108,105 +123,94 @@ export const Prices = (props) => {
     return (
         <>
             <h1>Price Listing</h1>
-            <button 
+            <Button 
                 type="button" 
-                className="btn btn-success" 
+                variant="contained" 
+                color="primary"
                 style={{ marginBottom: 30 }}
                 onClick={() => setState({...state, showForm: true})}
                 disabled={state.isUpdating ? true : false}
             >
                 <FiPlus style={{ marginRight: 8 }} />
                 Add Price
-            </button>
+            </Button>
 
             {state.showForm ? 
-                <div className="card form-portal-card mb-5">
+                <div>
                     <form onSubmit={state.isUpdating ? handleUpdate : handleSubmit}>
-                        <div className="row mb-5">
-                            <div className="col-md-6">
-                                <div className="form-group">
-                                    <label>Benefit</label>
-
-                                    <select 
-                                        name="benefit_id"
-                                        className="form-control"
+                        <Grid container spacing={3}>
+                            <Grid item md={6}>
+                                <FormControl variant="outlined" className={classes.formControl}>
+                                    <InputLabel id="demo-simple-select-outlined-label">Benefit</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-outlined-label"
+                                        id="demo-simple-select-outlined"
                                         value={state.benefit_id}
                                         onChange={e => setState({...state, benefit_id: e.target.value})}
+                                        label="Benefit"
                                     >
-                                        <option value="">Select Benefit</option> 
-                                        {props.wages.benefits.collection.length !== 0 ? props.wages.benefits.collection.map(benefit => (<option key={benefit.id} value={benefit.id}>{benefit.name}</option>)) : null}
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="col-md-6">
-                                <div className="form-group">
-                                    <label>Amount</label>
+                                        <MenuItem value="0">
+                                            <em>Select Benefit</em>
+                                        </MenuItem>
+                                        {props.wages.benefits.collection.length !== 0 ? props.wages.benefits.collection.map(benefit => (
+                                            <MenuItem key={benefit.id} value={benefit.id}>{benefit.name}</MenuItem>
+                                        )) : null}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item md={6}>
+                                <TextField 
+                                    label="Amount"
+                                    variant="outlined"
+                                    value={state.amount} 
+                                    onChange={(e) => setState({...state, amount: e.target.value})}
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
+                        </Grid>
 
-                                    <input
-                                        type="number"
-                                        name="amount"
-                                        className="form-control"
-                                        value={state.amount}
-                                        onChange={e => setState({...state, amount: e.target.value})}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-4">
-                                <button
-                                    type="submit"
-                                    className="btn btn-sm btn-success mr-5"
-                                >
-                                    {state.isUpdating ? 'Update' : 'Add'} Price
-                                </button>
-                                <button
-                                    type="button"
-                                    className="btn btn-sm btn-danger"
-                                    onClick={() => setState({
-                                        ...state,
-                                        id: 0,
-                                        benefit_id: 0,
-                                        amount: 0,
-                                        showForm: false,
-                                        isUpdating: false
-                                    })}
-                                >
-                                    Close
-                                </button>
-                            </div>
-                        </div>
+                        <Grid container spacing={3}>
+                            <Grid item md={12}>
+                                <ButtonGroup>
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        color="primary"
+                                    >
+                                        {state.isUpdating ? 'Update' : 'Add'} Price
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={() => setState({
+                                            ...state,
+                                            id: 0,
+                                            benefit_id: 0,
+                                            amount: 0,
+                                            showForm: false,
+                                            isUpdating: false
+                                        })}
+                                    >
+                                        Close
+                                    </Button>
+                                </ButtonGroup>
+                            </Grid>
+                        </Grid>
                     </form>
                 </div> 
             : null}
 
-            <div className="card form-portal-card mb-5">
-                <Row>
-                    <Col>
-                        <Table striped hover>
-                            <thead>
-                                <tr>
-                                    <th>Benefit</th>
-                                    <th>Price</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {props.wages.wages.collection.length !== 0 ? props.wages.wages.collection.map(price => {
-                                    return (
-                                        <PriceWidget 
-                                            key={price.id} 
-                                            price={price} 
-                                            onEdit={handleUpdateState} 
-                                            onDestroy={handleDestroy} 
-                                        />
-                                    )
-                                }) : <tr><td colSpan="3" className="text-danger">{'No Data Found!!'}</td></tr>}
-                            </tbody>
-                        </Table>
-                    </Col>
-                </Row>
-            </div>
+            <Grid container spacing={3}>
+                <Grid item md={12}>
+                    <TableComponent 
+                        columns={columns}
+                        rows={props.wages.wages.collection}
+                        callToAction={handleUpdateState}
+                        callToDelete={handleDestroy}
+                    />
+                </Grid>
+            </Grid>
         </>
     )
 }

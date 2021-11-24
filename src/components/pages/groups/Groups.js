@@ -1,22 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
-import { index, destroy } from "../../../redux/actions"
-import * as broadcast from '../../../redux/accessControl/types'
-
-import {
-    FiPlus
-} from 'react-icons/fi'
-import {
-    Container,
-    Row,
-    Col,
-    Table,
-} from 'react-bootstrap'
-import { NavLink } from 'react-router-dom'
-import GroupsWidget from '../../widgets/GroupsWidget'
+import React, { useEffect, useState } from 'react'
+import Requests from '../../../services/classes/Requests'
+import Alerts from '../../../services/classes/Alerts'
+import { Button, Grid, Typography } from '@material-ui/core'
+import TableComponent from '../../../widgets/components/TableComponent'
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 
 export const Groups = (props) => {
+
+    const [data, setData] = useState([])
+
+    const columns = [
+        {
+            name: 'Name',
+            label: 'name'
+        },
+        {
+            name: 'Slots',
+            label: 'max_slots'
+        }
+    ]
 
     const handleUpdate = (group) => {
         props.history.push({
@@ -29,78 +32,84 @@ export const Groups = (props) => {
 
     }
 
-    const handleDestroy = (data) => {
-        props.destroy('groups', data.id, {
-            success: broadcast.DELETE_GROUP_RECORD,
-            failed: broadcast.DELETE_GROUP_RECORD_FAILED
+    const handleDestroy = (group) => {
+        Alerts.flash('Are you sure?', 'warning', "You won't be able to revert this!")
+        .then(result => {
+            if (result.isConfirmed) {
+                Requests.destroy('groups', group.id)
+                .then(res => {
+                    setData([...data.filter(group => group.id !== res.data.data.id)])
+                    Alerts.success('Deleted!', res.data.message)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }
         })
     }
 
     useEffect(() => {
-        props.index('groups', {
-            success: broadcast.FETCH_GROUPS,
-            failed: broadcast.FETCH_GROUPS_FAILED
+        Requests.index('groups')
+        .then(res => {
+            setData(res.data.data)
         })
+        .catch(err => console.log(err))
     }, [])
+
+    useEffect(() => {
+        if(props.location && props.location.state) {
+            const group = props.location.state.group
+            const status = props.location.state.status
+
+            if (status === 'created') {
+                setData([group, ...data])
+                Alerts.success('Created', 'Group Created Successfully!!')
+            } else {
+                setData(data.map(el => {
+                    if (group.id === el.id) {
+                        return group
+                    }
+    
+                    return group
+                }))
+                Alerts.success('Updated', 'Group Updated Successfully!!')
+            }
+        }
+    }, [props.location])
 
     return (
         <>
-            <h1>Groups</h1>
-            <NavLink to="/groups/create" className="btn btn-success" style={{ marginBottom: 30 }}>
-                <FiPlus style={{ marginRight: 8 }} />
-                Add Group
-            </NavLink>
+            <Typography
+                variant="h5"
+                component="h2"
+                color="primary"
+                style={{ marginBottom: 10 }}
+            >
+                Groups
+            </Typography>
 
-            <div className="card form-portal-card">
-                <Container fluid>
-                    <Row>
-                        <Col>
-                            <Table striped hover>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Slots</th>
-                                        <th>Can Expire</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {props.groups.collection.length !== 0 ? props.groups.collection.map(group => {
-                                        return (
-                                            <GroupsWidget 
-                                                key={group.id}
-                                                group={group}
-                                                onEdit={handleUpdate}
-                                                onDestroy={handleDestroy}
-                                            />
-                                        )
-                                    }) : (<tr><td colSpan="5" className="text-danger">{'No Data Found!!!'}</td></tr>)}
-                                </tbody>
-                            </Table>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={() => props.history.push('/groups/create')}
+                style={{ marginBottom: 20 }}
+            >
+                <GroupAddIcon style={{ marginRight: 8 }} />
+                Add Group
+            </Button>
+
+            <Grid container spacing={3}>
+                <Grid item md={12}>
+                    <TableComponent 
+                        columns={columns}
+                        rows={data}
+                        callToAction={handleUpdate}
+                        callToDelete={handleDestroy}
+                    />
+                </Grid>
+            </Grid>
         </>
     )
 }
 
-const mapStateToProps = (state) => {
-    return {
-        groups: state.access.groups
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-
-    return {
-        index: (entity, broadcast) => dispatch(index(entity, broadcast)),
-        destroy: (entity, id, broadcast) => dispatch(destroy(entity, id, broadcast)),
-    }
-    
-}
-
-export default connect(
-    mapStateToProps, 
-    mapDispatchToProps
-)(Groups)
+export default Groups

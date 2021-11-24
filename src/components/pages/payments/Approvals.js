@@ -324,6 +324,8 @@ const Approvals = (props) => {
                                                     <Form.Control 
                                                         as="textarea"
                                                         placeholder="Enter Description"
+                                                        value={state.description}
+                                                        onChange={e => setState({...state, description: e.target.value})}
                                                     />
                                                 </Col>
                                             </Row>

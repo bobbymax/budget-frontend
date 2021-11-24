@@ -1,10 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useEffect, useState} from 'react'
-import * as broadcast from '../../../redux/accessControl/types'
-import { update } from "../../../redux/actions"
-import { Container, Row, Col, Form, Button } from 'react-bootstrap'
-import {FiSend} from 'react-icons/fi'
-import { connect } from 'react-redux'
+import { 
+    Grid, 
+    TextField,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    ButtonGroup,
+    Button
+} from '@material-ui/core'
+import Requests from '../../../services/classes/Requests'
 
 const UpdateRole = (props) => {
 
@@ -44,17 +50,21 @@ const UpdateRole = (props) => {
             cannot_expire: state.cannot_expire
         }
 
-        props.update('roles', state.id, data, {
-            success: broadcast.UPDATE_ROLE_RECORD,
-            failed: broadcast.UPDATE_ROLE_RECORD_FAILED
+        Requests.update('roles', state.id, data)
+        .then(res => {
+            props.history.push({
+                pathname: '/roles',
+                state: {
+                    role: res.data.data,
+                }
+            })
         })
-
-        props.history.push('/roles')
-
+        .catch(err => {
+            console.log(err)
+        })
     }
 
     useEffect(() => {
-
         if(props.location && props.location.state) {
             const role = props.location.state.role
             setState({
@@ -73,118 +83,112 @@ const UpdateRole = (props) => {
 
     return (
         <>
-            <div className="card form-portal-card">
-                <Container fluid>
-                    <Row>
-                        <Col>
-                            <Form onSubmit={handleUpdate}>
-                            <Row>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Role Name</Form.Label>
-                                        <Form.Control 
-                                            type="text" 
-                                            name="name"
-                                            placeholder="Enter Role Name"
-                                            value={state.name}
-                                            onChange={(e) => { setState({...state, name: e.target.value}) } }
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Maximum Number of Slots</Form.Label>
-                                        <Form.Control 
-                                            type="number" 
-                                            name="max_slots" 
-                                            placeholder="Enter Max Slots"
-                                            value={state.max_slots}
-                                            onChange={(e) => { setState({...state, max_slots: e.target.value}) } }
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Authorization</Form.Label>
-                                        <Form.Control 
-                                            as="select" 
-                                            name="isSuper"
-                                            value={state.isSuper}
-                                            onChange={(e) => { setState({...state, isSuper: e.target.value}) } }
-                                        >
-                                            <option value="">Select Role Level</option>
-                                            {adminOptions.map((option, i) => (
-                                                <option key={i} value={option.value}>{option.label}</option>
-                                            ))}
-                                        </Form.Control>
-                                    </Form.Group>
-                                </Col>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Start Date</Form.Label>
-                                        <Form.Control 
-                                            type="date"
-                                            name="start_date"
-                                            value={state.start_date}
-                                            onChange={(e) => { setState({...state, start_date: e.target.value}) } }
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Expiry Date</Form.Label>
-                                        <Form.Control 
-                                            type="date"
-                                            name="expiry_date"
-                                            value={state.expiry_date}
-                                            onChange={(e) => { setState({...state, expiry_date: e.target.value}) } }
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col md={4} className="mb-4">
-                                    <Form.Group>
-                                        <Form.Label>Cannot Expire?</Form.Label>
-                                        <Form.Control 
-                                            as="select" 
-                                            name="cannot_expire"
-                                            value={state.cannot_expire}
-                                            onChange={(e) => { setState({...state, cannot_expire: e.target.value}) } }
-                                        >
-                                            <option value="">Role cannot Expire?</option>
-                                            {expiryDates.map((option, i) => (
-                                                <option key={i} value={option.value}>{option.label}</option>
-                                            ))}
-                                        </Form.Control>
-                                    </Form.Group>
-                                </Col>
+            <form onSubmit={handleUpdate}>
+                <Grid container spacing={3}>
+                    <Grid item md={4}>
+                        <TextField 
+                            variant="outlined"
+                            value={state.name}
+                            onChange={(e) => setState({...state, name: e.target.value})}
+                            label="Role Name"
+                            fullWidth
+                            required
+                        />
+                    </Grid>
+                    <Grid item md={4}>
+                        <TextField 
+                            variant="outlined"
+                            value={state.max_slots}
+                            onChange={(e) => setState({...state, max_slots: e.target.value})}
+                            label="Maximum Slots"
+                            fullWidth
+                            required
+                        />
+                    </Grid>
+                    <Grid item md={4}>
+                        <FormControl variant="outlined" style={{ minWidth: '100%' }}>
+                            <InputLabel id="authorization">Authorization</InputLabel>
+                            <Select
+                                labelId="authorizationLabel"
+                                id="authorization"
+                                value={state.isSuper}
+                                onChange={(e) => setState({ ...state, isSuper: e.target.value })}
+                                label="Authorization"
+                                required
+                            >
+                                <MenuItem value="0">
+                                    <em>Select Role Level</em>
+                                </MenuItem>
+                                {adminOptions.map((option, i) => (
+                                    <MenuItem key={i} value={option.value}>{option.label}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item md={4}>
+                        <TextField 
+                            variant="outlined"
+                            id="start-date"
+                            label="Start Date"
+                            type="date"
+                            value={state.start_date}
+                            onChange={(e) => setState({...state, start_date: e.target.value})}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            fullWidth
+                            required
+                        />
+                    </Grid>
 
-                                <Col>
-                                    <Button variant="success" type="submit">
-                                        <FiSend style={{ marginRight: 8 }}/>
-                                        Update Role
-                                    </Button>
-                                </Col>
-                            </Row>
-                            </Form>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
+                    <Grid item md={4}>
+                        <TextField
+                            variant="outlined"
+                            id="expiry-date"
+                            label="Expiry Date"
+                            type="date"
+                            value={state.expiry_date}
+                            onChange={(e) => setState({...state, expiry_date: e.target.value})}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item md={4}>
+                        <FormControl variant="outlined" style={{ minWidth: '100%' }}>
+                            <InputLabel id="authorization">Can Role Expire</InputLabel>
+                            <Select
+                                labelId="cannotExpireLabel"
+                                id="cannot-expire"
+                                value={state.cannot_expire}
+                                onChange={(e) => setState({...state, cannot_expire: e.target.value})}
+                                label="Cannot Expire"
+                                required
+                            >
+                                <MenuItem value="9" disabled>
+                                    <em>Can Role Expire?</em>
+                                </MenuItem>
+                                {expiryDates.map((option, i) => (
+                                    <MenuItem key={i} value={option.value}>{option.label}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item md={12}>
+                        <ButtonGroup>
+                            <Button variant="contained" color="primary" type="submit">
+                                Update Role
+                            </Button>
+                            <Button variant="contained" color="secondary">
+                                Cancel
+                            </Button>
+                        </ButtonGroup>
+                    </Grid>
+                </Grid>
+            </form>
         </>
     )
 }
 
-const mapStateToProps = state => ({
-    item: state.access.roles.role
-})
-
-const mapDispatchToProps = dispatch => {
-    return {
-        update: (entity, id, data, broadcast) => dispatch(update(entity, id, data, broadcast))
-    }
-}
-
-export default connect(
-    mapStateToProps, 
-    mapDispatchToProps
-)(UpdateRole)
+export default UpdateRole

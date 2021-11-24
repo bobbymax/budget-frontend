@@ -18,6 +18,10 @@ const initialState = {
         collection: [],
         batch: null
     },
+    refunds: {
+        collection: [],
+        refund: null
+    }
 }
 
 const paymentReducer = (state=initialState, action) => {
@@ -40,6 +44,15 @@ const paymentReducer = (state=initialState, action) => {
                 },
                 error: ""
             }
+        case paymentActions.FETCHED_REFUNDS :
+            return {
+                ...state,
+                refunds: {
+                    ...state.refunds,
+                    collection: action.payload.data
+                },
+                error: ""
+            }
         case paymentActions.CREATED_CLAIM_RECORD :
             return {
                 ...state,
@@ -57,6 +70,16 @@ const paymentReducer = (state=initialState, action) => {
                     ...state.instructions,
                     collection: [action.payload.data, ...state.instructions.collection],
                     instruction: null
+                },
+                error: ""
+            }
+        case paymentActions.CREATED_REFUND_RECORD :
+            return {
+                ...state,
+                refunds: {
+                    ...state.refunds,
+                    collection: [action.payload.data, ...state.refunds.collection],
+                    refund: null
                 },
                 error: ""
             }
@@ -93,6 +116,22 @@ const paymentReducer = (state=initialState, action) => {
                 },
                 error: ""
             }
+        case paymentActions.UPDATED_REFUND_RECORD :
+            return {
+                ...state,
+                refunds: {
+                    ...state.refunds,
+                    collection: state.refunds.collection.map((refund) => {
+                        if (refund.id === action.payload.data.id) {
+                            return action.payload.data
+                        }
+    
+                        return refund
+                    }),
+                    refund: null
+                },
+                error: ""
+            }
         case paymentActions.FETCHED_CLAIM_RECORD :
             return {
                 ...state,
@@ -108,6 +147,15 @@ const paymentReducer = (state=initialState, action) => {
                 instructions: {
                     ...state.instructions,
                     instruction: action.payload.data
+                },
+                error: ""
+            }
+        case paymentActions.FETCHED_REFUND_RECORD :
+            return {
+                ...state,
+                refunds: {
+                    ...state.refunds,
+                    refund: action.payload.data
                 },
                 error: ""
             }
@@ -135,6 +183,18 @@ const paymentReducer = (state=initialState, action) => {
                 },
                 error: ""
             }
+        case paymentActions.DELETED_REFUND_RECORD :
+            return {
+                ...state,
+                refunds: {
+                    ...state.refunds,
+                    collection: [
+                        ...state.refunds.collection.filter(refund => refund.id !== action.payload.data.id)
+                    ],
+                    refund: null
+                },
+                error: ""
+            }
         case paymentActions.FETCHED_CLAIMS_FAILED :
             return {
                 ...state,
@@ -152,6 +212,16 @@ const paymentReducer = (state=initialState, action) => {
                     ...state.instructions,
                     collection: [],
                     instruction: null
+                },
+                error: action.payload
+            }
+        case paymentActions.FETCHED_REFUNDS_FAILED :
+            return {
+                ...state,
+                refunds: {
+                    ...state.refunds,
+                    collection: [],
+                    refund: null
                 },
                 error: action.payload
             }
@@ -185,6 +255,18 @@ const paymentReducer = (state=initialState, action) => {
                 instructions: {
                     ...state.instructions,
                     instruction: null
+                },
+                error: action.payload
+            }
+        case paymentActions.CREATED_REFUND_RECORD_FAILED :
+        case paymentActions.UPDATED_REFUND_RECORD_FAILED :
+        case paymentActions.FETCHED_REFUND_RECORD_FAILED :
+        case paymentActions.DELETED_REFUND_RECORD_FAILED :
+            return {
+                ...state,
+                refunds: {
+                    ...state.refunds,
+                    refund: null
                 },
                 error: action.payload
             }

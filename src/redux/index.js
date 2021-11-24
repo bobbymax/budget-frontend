@@ -6,7 +6,10 @@ import thunk from "redux-thunk"
 
 const middlewares = [thunk]
 
-const store = createStore(reducers, composeWithDevTools(applyMiddleware(...middlewares)))
+const store = createStore(
+	reducers, 
+	composeWithDevTools(applyMiddleware(...middlewares))
+)
 
 export default store
 

@@ -18,7 +18,9 @@ const initialState = {
     },
     batches: {
         collection: [],
-        batch: null
+        batch: null,
+        status: "",
+        message: ""
     },
     funds: {
         collection: [],
@@ -239,9 +241,11 @@ const budgettingReducer = (state=initialState, action) => {
                 ...state,
                 batches: {
                     ...state.batches,
-                    batch: action.payload.data
+                    batch: action.payload.data,
+                    status: action.payload.status,
+                    message: action.payload.message
                 },
-                error: ""
+                error: "",
             }
         case budgetActions.FETCHED_FUND_RECORD :
             return {

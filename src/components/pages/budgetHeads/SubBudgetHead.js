@@ -1,11 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { FormControl, Grid, InputLabel, MenuItem, Select, TextField, Button, ButtonGroup, makeStyles } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import { FiSend } from 'react-icons/fi'
 import { connect } from 'react-redux'
 import * as broadcast from '../../../redux/accessControl/types'
 import { index, store, update } from '../../../redux/actions'
 
-export const SubBudgetHead = (props) => {
+const useStyles = makeStyles(theme => ({
+    formControl: {
+        minWidth: '100%',
+    },
+    marginGutter: {
+        marginBottom: theme.spacing(3)
+    }
+}))
+
+const SubBudgetHead = (props) => {
 
     const defaults = {
         budgetTypes: ['capital', 'recursive', 'personnel'],
@@ -29,6 +39,7 @@ export const SubBudgetHead = (props) => {
 
     const [state, setState] = useState(initialState)
     const [actionType, setActionType] = useState("")
+    const classes = useStyles()
 
     const data = {
         budget_head_id: state.budget_head_id,
@@ -100,128 +111,142 @@ export const SubBudgetHead = (props) => {
         <div>
             <h1 className="mb-5">{ actionType !== "" ? 'Update' : 'Create'} Sub Budget Head</h1>
 
-            <div className="card form-portal-card">
+            <div>
                 <form onSubmit={actionType !== "" ? handleUpdate : handleSubmit}>
-                    <div className="row">
-                        <div className="col-md-4 mb-3">
-                            <div className="form-group">
-                                <label htmlFor="budgetCode" className="mb-3">Budget Code</label>
-                                <input
-                                    type="text"
-                                    name="budgetCode"
-                                    className="form-control" 
-                                    id="budgetCode"
-                                    placeholder="Enter Sub Budget Code"
-                                    value={state.budgetCode}
-                                    onChange={e => setState({...state, budgetCode: e.target.value})}
-                                />
-                            </div>
-                        </div>
-                        <div className="col-md-4 mb-3">
-                            <div className="form-group">
-                                <label htmlFor="name" className="mb-3">Name</label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    className="form-control" 
-                                    id="name"
-                                    placeholder="Enter Sub Budget Name"
-                                    value={state.name}
-                                    onChange={e => setState({...state, name: e.target.value})}
-                                />
-                            </div>
-                        </div>
+                    <Grid container spacing={3} className={classes.marginGutter}>
+                        <Grid item md={4}>
+                            <TextField
+                                label="Budget Code"
+                                variant="outlined" 
+                                value={state.budgetCode}
+                                onChange={e => setState({...state, budgetCode: e.target.value})}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+                        <Grid item md={4}>
+                            <TextField
+                                label="Name"
+                                variant="outlined"
+                                value={state.name}
+                                onChange={e => setState({...state, name: e.target.value})}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
 
-                        <div className="col-md-4 mb-3">
-                            <div className="form-group">
-                                <label htmlFor="type" className="mb-3">Budget Type</label>
-                                <select
-                                    name="type"
-                                    className="form-control"
-                                    id="type"
+                        <Grid item md={4}>
+                            <FormControl variant="outlined" className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-outlined-label">Budget Type</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label"
+                                    id="demo-simple-select-outlined"
                                     value={state.type}
                                     onChange={e => setState({...state, type: e.target.value})}
+                                    label="Budget Type"
                                 >
-                                    <option value="">Select Budget Type</option>
-                                    {defaults.budgetTypes.map((btype, i) => (<option key={i} value={btype}>{btype}</option>))}
+                                    <MenuItem value="0" disabled>
+                                        <em>Select Budget Type</em>
+                                    </MenuItem>
+                                    {defaults.budgetTypes.map((btype, i) => (
+                                        <MenuItem key={i} value={btype}>{btype}</MenuItem>
+                                    ))}
 
-                                </select>
-                            </div>
-                        </div>
+                                </Select>
+                            </FormControl>
+                        </Grid>
 
-                        <div className="col-md-8 mb-3">
-                            <div className="form-group">
-                                <label htmlFor="department_id" className="mb-3">Department</label>
-                                <select
-                                    name="department_id"
-                                    className="form-control"
-                                    id="department_id"
+                    </Grid>
+                    <Grid container spacing={3} className={classes.marginGutter}>
+                        <Grid item md={8}>
+                            <FormControl variant="outlined" className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-outlined-label-2">Department</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label-2"
+                                    id="demo-simple-select-outlined-2"
                                     value={state.department_id}
                                     onChange={e => setState({...state, department_id: e.target.value})}
+                                    label="Department"
                                 >
-                                    <option value="">Select Department</option>
-                                    {props.departments.length !== 0 ? props.departments.map(department => (<option key={department.id} value={department.id}>{department.name}</option>)) : null}
-                                </select>
-                            </div>
-                        </div>
+                                    <MenuItem value="0" disabled>
+                                        <em>Select Department</em>
+                                    </MenuItem>
+                                    {props.departments.length !== 0 ? props.departments.map(department => (
+                                        <MenuItem key={department.id} value={department.id}>{department.name}</MenuItem>
+                                    )) : null}
+                                </Select>
+                            </FormControl>
+                        </Grid>
 
-                        <div className="col-md-4 mb-3">
-                            <div className="form-group">
-                                <label htmlFor="logisticsBudget" className="mb-3">Logistics Budget</label>
-                                <select
-                                    name="logisticsBudget"
-                                    className="form-control"
-                                    id="logisticsBudget"
+                        <Grid item md={4}>
+                            <FormControl variant="outlined" className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-outlined-label-3">Logistics Budget</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label-3"
+                                    id="demo-simple-select-outlined-3"
                                     value={state.logisticsBudget}
                                     onChange={e => setState({...state, logisticsBudget: e.target.value})}
+                                    label="Logistics Budget"
                                 >
-                                    <option value="">Is Logistics Budget?</option>
-                                    {defaults.logistics.map((logist, i) => (<option key={i} value={logist.value}>{logist.label}</option>))}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="col-md-12 mb-3">
-                            <div className="form-group">
-                                <label htmlFor="budget_head_id" className="mb-3">Budget Head</label>
-                                <select
-                                    name="budget_head_id"
-                                    className="form-control"
-                                    id="budget_head_id"
+                                    <MenuItem value="0" disabled><em>Is Logistics Budget?</em></MenuItem>
+                                    {defaults.logistics.map((logist, i) => (<MenuItem key={i} value={logist.value}>{logist.label}</MenuItem>))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={3}>
+                        <Grid item md={12} className={classes.marginGutter}>
+                            <FormControl variant="outlined" className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-outlined-label-4">Budget Head</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label-4"
+                                    id="demo-simple-select-outlined-4"
                                     value={state.budget_head_id}
                                     onChange={e => setState({...state, budget_head_id: e.target.value})}
+                                    label="Budget Head"
                                 >
-                                    <option value="">Select Budget Head</option>
-                                    { props.budgetHeads.length !== 0 ? props.budgetHeads.map(budgetHead => (<option key={budgetHead.id} value={budgetHead.id}>{budgetHead.name}</option>)) : null}
+                                    <MenuItem value="0" disabled><em>Select Budget Head</em></MenuItem>
+                                    { props.budgetHeads.length !== 0 ? props.budgetHeads.map(budgetHead => (<MenuItem key={budgetHead.id} value={budgetHead.id}>{budgetHead.name}</MenuItem>)) : null}
 
-                                </select>
-                            </div>
-                        </div>
+                                </Select>
+                            </FormControl>
+                        </Grid>
 
-                        <div className="col-md-12 mb-3">
-                            <div className="form-group">
-                                <label htmlFor="description" className="mb-3">Description</label>
-                                <textarea
-                                    className="form-control"
-                                    placeholder="Enter Sub Budget Description Here"
-                                    id="description"
-                                    style={{ height: 150, maxHeight: 150 }}
-                                    value={state.description}
-                                    onChange={e => setState({...state, description: e.target.value})}
-                                ></textarea>
-                            </div>
-                        </div>
+                        <Grid item md={12}>
+                            <TextField
+                                id="outlined-textarea"
+                                label="Description"
+                                multiline
+                                rows={5}
+                                variant="outlined"
+                                value={state.description}
+                                onChange={e => setState({...state, description: e.target.value})}
+                                required
+                                fullWidth
+                            />
+                        </Grid>
 
-                        <div className="col-md-4 mt-3">
-                            <button
-                                type="submit"
-                                className="btn btn-success btn-sm"
-                            >
-                                <FiSend style={{ marginRight: 15 }} />
-                                { actionType !== "" ? 'Update' : 'Create'} Sub Budget Head
-                            </button>
-                        </div>
-                    </div>
+                        <Grid item md={12}>
+                            <ButtonGroup>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    <FiSend style={{ marginRight: 15 }} />
+                                    { actionType !== "" ? 'Update' : 'Create'} Sub Budget Head
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="contained"
+                                    color="secondary"
+                                >
+                                    <FiSend style={{ marginRight: 15 }} />
+                                    Cancel
+                                </Button>
+                            </ButtonGroup>
+                        </Grid>
+                    </Grid>
                 </form>
             </div>
 

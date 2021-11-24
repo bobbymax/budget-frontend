@@ -1,29 +1,37 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
-import { index, destroy } from "../../../redux/actions"
-import * as broadcast from '../../../redux/accessControl/types'
-
-import {
-    FiPlus
-} from 'react-icons/fi'
-import {
-    Container,
-    Row,
-    Col,
-    Table,
-} from 'react-bootstrap'
-import { NavLink } from 'react-router-dom'
-import DepartmentsWidget from '../../widgets/DepartmentsWidget'
+import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { Grid, Button, Typography } from '@material-ui/core'
+import TableComponent from '../../../widgets/components/TableComponent'
+import { ApartmentRounded } from '@material-ui/icons'
+import Requests from '../../../services/classes/Requests'
+import Alerts from '../../../services/classes/Alerts'
 
 const Departments = (props) => {
 
-    // const handleSubmit = (data) => {
+    const history = useHistory()
+    const [data, setData] = useState([])
 
-    // }
+    const columns = [
+        {
+            name: 'Name',
+            label: 'name'
+        },
+        {
+            name: 'Code',
+            label: 'code'
+        },
+        {
+            name: 'Type',
+            label: 'type'
+        },
+        {
+            name: 'Parent',
+            label: 'parentId'
+        }
+    ]
 
     const handleUpdate = (department) => {
-        // e.preventDefault()
         props.history.push({
             pathname: `departments/${department.label}/update`,
             state: {
@@ -34,78 +42,87 @@ const Departments = (props) => {
 
     }
 
-    const handleDestroy = (data) => {
-        props.destroy('departments', data.id, {
-            success: broadcast.DELETE_DEPARTMENT_RECORD,
-            failed: broadcast.DELETE_DEPARTMENT_RECORD_FAILED
+    const handleDestroy = (dept) => {
+        Alerts.flash('Are you sure?', 'warning', "You won't be able to revert this!")
+        .then(result => {
+            if (result.isConfirmed) {
+                Requests.destroy('departments', dept.id)
+                .then(res => {
+                    setData([...data.filter(department => department.id !== res.data.data.id)])
+                    Alerts.success('Deleted!', res.data.message)
+                })
+                .catch(err => console.log(err))
+            }
         })
-        // props.index('departments')
     }
 
     useEffect(() => {
-        props.index('departments', {
-            success: broadcast.FETCH_DEPARTMENTS,
-            failed: broadcast.FETCH_DEPARTMENTS_FAILED
+        Requests.index('departments')
+        .then(res => {
+            setData(res.data.data)
+        })
+        .catch(err => {
+            console.log(err)
         })
     }, [])
 
+    useEffect(() => {
+        if(props.location && props.location.state) {
+            const department = props.location.state.department
+            const status = props.location.state.status
+
+            if (status === 'created') {
+                setData([department, ...data])
+                Alerts.success('Created', 'Department Created Successfully!!')
+            } else {
+                setData(data.map(el => {
+                    if (department.id === el.id) {
+                        return department
+                    }
+    
+                    return department
+                }))
+                Alerts.success('Updated', 'Department Updated Successfully!!')
+            }
+        }
+    }, [props.location])
+
     return (
         <>
-            <h1>Departments</h1>
-            <NavLink to="/departments/create" className="btn btn-success" style={{ marginBottom: 30 }}>
-                <FiPlus style={{ marginRight: 8 }} />
-                Add Department
-            </NavLink>
+            <Typography
+                variant="h4"
+                component="h2"
+                style={{ marginBottom: 10 }}
+            >
+                    Departments
+            </Typography>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={() => history.push('/departments/create')}
+                style={{ marginBottom: 30 }}
+            >
+                <ApartmentRounded style={{ fontSize: 'medium' }} />
+                <Typography
+                    variant="body2"
+                    style={{ marginLeft: 6 }}
+                >
+                    Add Department
+                </Typography>
+            </Button>
 
-            <div className="card form-portal-card">
-                <Container fluid>
-                    <Row>
-                        <Col>
-                            <Table striped hover>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Code</th>
-                                        <th>Type</th>
-                                        <th>Parent</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {props.departments.collection.length !== 0 ? props.departments.collection.map(department => {
-                                        return (
-                                            <DepartmentsWidget 
-                                                key={department.id}
-                                                department={department}
-                                                onEdit={handleUpdate}
-                                                onDestroy={handleDestroy}
-                                            />
-                                        )
-                                    }): <tr><td colSpan="5" className="text-danger">{'No Data Found!!!'}</td></tr>}
-                                </tbody>
-                            </Table>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
+            <Grid container spacing={3}>
+                <Grid item md={12}>
+                    <TableComponent 
+                        columns={columns}
+                        rows={data}
+                        callToAction={handleUpdate}
+                        callToDelete={handleDestroy}
+                    />
+                </Grid>
+            </Grid>
         </>
     )
 }
 
-const mapStateToProps = state => {
-    return {
-        departments: state.access.departments
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        index: (entity, broadcast) => dispatch(index(entity, broadcast)),
-        destroy: (entity, id, broadcast) => dispatch(destroy(entity, id, broadcast))
-    }
-}
-
-export default connect(
-    mapStateToProps, 
-    mapDispatchToProps
-)(Departments)
+export default Departments

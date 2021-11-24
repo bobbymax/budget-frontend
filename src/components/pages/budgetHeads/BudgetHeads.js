@@ -1,22 +1,45 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as broadcast from '../../../redux/accessControl/types'
 import { connect } from 'react-redux'
 import { index } from "../../../redux/actions"
-import {
-    FiUpload
-} from 'react-icons/fi'
-import {
-    Container,
-    Row,
-    Col,
-    Table,
-} from 'react-bootstrap'
-import { NavLink } from 'react-router-dom'
-import BudgetHeadsWidget from '../../widgets/BudgetHeadsWidget'
+import { makeStyles } from '@material-ui/core'
+import {useHistory} from 'react-router-dom'
+import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
+import TableComponent from '../../../widgets/components/TableComponent'
+import PublishIcon from '@material-ui/icons/Publish'
+import Typography from '@material-ui/core/Typography'
+
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        flexGrow: 1
+    },
+    gapsRight: {
+        marginRight: theme.spacing(2),
+    },
+    gapsBottom: {
+        marginBottom: theme.spacing(3)
+    }
+}))
 
 const BudgetHeads = (props) => {
 
+    const [data, setData] = useState([])
+    const classes = useStyles()
+    const history = useHistory()
+
+    const columns = [
+        {
+            name: 'Code',
+            label: 'budgetId'
+        },
+        {
+            name: 'Description',
+            label: 'name'
+        }
+    ]
 
     const handleUpdate = (budgetHead) => {
         props.history.push({
@@ -27,6 +50,10 @@ const BudgetHeads = (props) => {
         })
     }
 
+    const handleDelete = data => {
+        console.log(data)
+    }
+
 
     useEffect(() => {
         props.index('budgetHeads', {
@@ -35,41 +62,42 @@ const BudgetHeads = (props) => {
         })
     }, [])
 
+    useEffect(() => {
+        if (props.budgetHeads.collection.length > 0) {
+            setData(props.budgetHeads.collection)
+        }
+    }, [props.budgetHeads.collection])
+
     return (
         <>
-            <h1 className="mb-3">Budget Heads</h1>
-            <NavLink to="/budget-heads/import" className="btn btn-success mb-5" style={{ marginBottom: 30 }}>
-                <FiUpload style={{ marginRight: 8 }} />
-                Import Budget Heads
-            </NavLink>
+            <Typography
+                variant="h5"
+                component="h2"
+                className={classes.gapsBottom}
+            >
+                Budget Heads
+            </Typography>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={() => history.push('/budget-heads/import')}
+                className={classes.gapsBottom}
+            >
+                <PublishIcon className={classes.gapsRight} />
+                Import BH
+            </Button>
 
-            <div className="card form-portal-card">
-                <Container fluid>
-                    <Row>
-                        <Col>
-                            <Table striped hover>
-                                <thead>
-                                    <tr>
-                                        <th>Code</th>
-                                        <th>Description</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {props.budgetHeads.collection.length !== 0 ? props.budgetHeads.collection.map(budgetHead => {
-                                        return (
-                                            <BudgetHeadsWidget 
-                                                key={budgetHead.id}
-                                                budgetHead={budgetHead}
-                                                onEdit={handleUpdate}
-                                            />
-                                        )
-                                    }) : (<tr><td colSpan="3" className="text-danger">{'No Data Found!!!'}</td></tr>)}
-                                </tbody>
-                            </Table>
-                        </Col>
-                    </Row>
-                </Container>
+            <div className={classes.root}>
+                <Grid container spacing={3}>
+                    <Grid item md={12}>
+                        <TableComponent 
+                            columns={columns} 
+                            rows={data} 
+                            callToAction={handleUpdate}
+                            callToDelete={handleDelete}
+                        />
+                    </Grid>
+                </Grid>
             </div>
         </>
     )

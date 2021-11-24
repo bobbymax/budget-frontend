@@ -5,15 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './redux';
-
-// import "bootstrap/dist/css/bootstrap.css"
-// import "select2/dist/css/select2.css"
-// import "./assets/css/styles.css"
-
-
-// import "jquery/dist/jquery"
-// import "@popperjs/core/dist/umd/popper"
-// import "bootstrap/dist/js/bootstrap"
+import "./index.css"
 
 import "./assets/css/cassie.css"
 

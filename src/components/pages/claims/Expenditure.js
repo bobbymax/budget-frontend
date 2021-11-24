@@ -5,6 +5,7 @@ import { Button, Col, Form, Row } from 'react-bootstrap'
 import { connect, useSelector } from 'react-redux'
 import { fetch, index, store } from '../../../redux/actions'
 import * as broadcast from '../../../redux/accessControl/types'
+import Requests from '../../../services/classes/Requests'
 
 export const Expenditure = (props) => {
 
@@ -28,6 +29,7 @@ export const Expenditure = (props) => {
 
     const [state, setState] = useState(initialState)
     const auth = useSelector(state => state.access.staff.authenticatedUser)
+    const [subBudgets, setSubBudgets] = useState([])
 
     const handleChange = value => {
         if (value.length === 8) {
@@ -85,6 +87,14 @@ export const Expenditure = (props) => {
             additional_info: ""
         })
     }
+
+    useEffect(() => {
+        Requests.index('subBudgetHeads')
+        .then(res => {
+            setSubBudgets(res.data.data)
+        })
+        .catch(err => console.log(err))
+    }, [])
 
     useEffect(() => {
         props.index('subBudgetHeads', {
@@ -211,7 +221,7 @@ export const Expenditure = (props) => {
                                 }}
                             >
                                 <option value="0">SELECT SUB BUDGET HEAD</option>
-                                {state.subBudgetHeads.length !== 0 ? state.subBudgetHeads.map(subBudgetHead => {
+                                {subBudgets.map(subBudgetHead => {
                                     if (auth && auth.department.id === subBudgetHead.department_id) {
                                         return (
                                             <option key={subBudgetHead.id} value={subBudgetHead.id}>{subBudgetHead.name}</option>
@@ -219,7 +229,7 @@ export const Expenditure = (props) => {
                                     } else {
                                         return null
                                     }
-                                }) : null}
+                                })}
                             </Form.Control>
                         </Form.Group>
                     </Col>

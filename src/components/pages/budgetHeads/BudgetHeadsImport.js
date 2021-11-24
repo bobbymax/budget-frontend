@@ -6,7 +6,7 @@ import { Container, Row, Col, Form, Table } from 'react-bootstrap'
 import { FiDatabase } from 'react-icons/fi'
 import { bulk } from '../../../redux/actions'
 
-export const BudgetHeadsImport = (props) => {
+const BudgetHeadsImport = (props) => {
 
     const [budgetHeads, setBudgetHeads] = useState([])
 

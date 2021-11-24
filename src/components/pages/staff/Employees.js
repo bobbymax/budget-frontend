@@ -4,12 +4,38 @@ import { connect } from 'react-redux'
 import { destroy, index, store, update } from '../../../redux/actions'
 import * as broadcast from '../../../redux/accessControl/types'
 import * as broad from '../../../redux/entitlements/types'
-import {Row, Col, Container, Table, Button, Form} from 'react-bootstrap'
+import {Form} from 'react-bootstrap'
 import { FiPlus, FiUserPlus, FiX } from 'react-icons/fi'
-import EmployeeWidget from '../../widgets/EmployeeWidget'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import { customTheme, filterDepts } from '../../../services/helpers/functions'
+import Requests from '../../../services/classes/Requests'
+import { 
+    Select as MuiSelect,
+    Grid, 
+    Button, 
+    ButtonGroup, 
+    TextField, 
+    FormControl, 
+    InputLabel,
+    MenuItem
+} from '@material-ui/core'
+import TableComponent from '../../../widgets/components/TableComponent'
+
+const columns = [
+    {
+        name: 'Name',
+        label: 'name'
+    },
+    {
+        name: 'Staff Number',
+        label: 'staff_no'
+    },
+    {
+        name: 'Email',
+        label: 'email'
+    }
+]
 
 export const Employees = (props) => {
 
@@ -24,6 +50,7 @@ export const Employees = (props) => {
     }
 
     const [state, setState] = useState(initialState)
+    const [staff, setStaff] = useState([])
     const [departments, setDepartments] = useState([])
     const [roles, setRoles] = useState([])
     
@@ -96,10 +123,11 @@ export const Employees = (props) => {
     }
 
     useEffect(() => {
-        props.index('users', {
-            success: broadcast.FETCH_ALL_STAFF,
-            failed: broadcast.FETCH_ALL_STAFF_FAILED
+        Requests.index('users')
+        .then(res => {
+            setStaff(res.data.data)
         })
+        .catch(err => console.log(err))
     }, [])
 
     useEffect(() => {
@@ -127,7 +155,8 @@ export const Employees = (props) => {
         <>
             <h1>Staff List</h1>
             <Button 
-                className="btn btn-success" 
+                variant="contained"
+                color="primary" 
                 style={{ marginBottom: 30 }}
                 onClick={() => setState({...state, showForm: true})}
                 disabled={state.isUpdating}
@@ -137,58 +166,61 @@ export const Employees = (props) => {
             </Button>
 
             {state.showForm ? 
-                <div className="card form-portal-card mb-5">
-                    <Form onSubmit={handleSubmit}>
-                        <Row className="mb-3">
-                            <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label>Name</Form.Label>
-                                    <Form.Control 
-                                        type="text"
-                                        placeholder="Enter Staff Name"
-                                        value={state.name}
-                                        onChange={e => setState({...state, name: e.target.value})}
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col md={2}>
-                                <Form.Group>
-                                    <Form.Label>Staff Number</Form.Label>
-                                    <Form.Control 
-                                        type="text"
-                                        placeholder="Enter Staff Number"
-                                        value={state.staff_no}
-                                        onChange={e => setState({...state, staff_no: e.target.value})}
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label>Email</Form.Label>
-                                    <Form.Control 
-                                        type="email"
-                                        placeholder="Enter Staff Email"
-                                        value={state.email}
-                                        onChange={e => setState({...state, email: e.target.value})}
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col md={2}>
-                                <Form.Group>
-                                    <Form.Label>Grade Level</Form.Label>
-                                    <Form.Control
-                                        as="select"
+                <>
+                    <form onSubmit={handleSubmit}>
+                        <Grid container spacing={3}>
+                            <Grid item md={4}>
+                                <TextField 
+                                    variant="outlined"
+                                    label="Name"
+                                    value={state.name}
+                                    onChange={e => setState({...state, name: e.target.value})}
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
+                            <Grid item md={2}>
+                                <TextField 
+                                    variant="outlined"
+                                    label="Staff Number"
+                                    value={state.staff_no}
+                                    onChange={e => setState({...state, staff_no: e.target.value})}
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
+                            <Grid item md={4}>
+                                <TextField 
+                                    variant="outlined"
+                                    label="Email"
+                                    value={state.email}
+                                    onChange={e => setState({...state, email: e.target.value})}
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
+                            <Grid item md={2}>
+
+                                <FormControl variant="outlined" style={{ minWidth: '100%' }}>
+                                    <InputLabel id="gradeLevel">Grade Level</InputLabel>
+                                    <MuiSelect
+                                        labelId="gradeLevelLabel"
+                                        id="gradeLevel"
                                         value={state.grade_level_id}
                                         onChange={e => setState({...state, grade_level_id: e.target.value})}
+                                        label="Grade Level"
+                                        required
                                     >
-                                        <option>Select Grade Level</option>
-                                        {props.entitlements.gradeLevels.collection.length !== 0 ? props.entitlements.gradeLevels.collection.map(level => <option key={level.id} value={level.id}>{level.code}</option>) : null}
-                                    </Form.Control>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row className="mb-3">
-                            <Col md={6}>
+                                        <MenuItem value="0" disabled><em>Select Grade Level</em></MenuItem>
+                                        {props.entitlements.gradeLevels.collection.length !== 0 ? props.entitlements.gradeLevels.collection.map(level => (
+                                            <MenuItem key={level.id} value={level.id}>{level.code}</MenuItem>
+                                        )) : null}
+                                    </MuiSelect>
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                        <Grid container spacing={3}>
+                            <Grid item md={6}>
                                 <Form.Group>
                                     <Form.Label>Departments</Form.Label>
                                     <Select 
@@ -203,8 +235,8 @@ export const Employees = (props) => {
                                         autoFocus
                                     />
                                 </Form.Group>
-                            </Col>
-                            <Col md={6}>
+                            </Grid>
+                            <Grid item md={6}>
                                 <Form.Group>
                                     <Form.Label>Roles</Form.Label>
                                     <Select 
@@ -219,74 +251,61 @@ export const Employees = (props) => {
                                         autoFocus
                                     />
                                 </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Button 
-                                    variant="success"
-                                    type="submit"
+                            </Grid>
+                        </Grid>
+                        <Grid container spacing={3}>
+                            <Grid item md={12}>
+                                <ButtonGroup
+                                    variant="contained"
                                 >
-                                    <FiUserPlus style={{ marginRight: 10 }}/>
-                                    {state.isUpdating ? 'Update' : 'Add'} Staff
-                                </Button>
-                                <Button 
-                                    variant="danger"
-                                    onClick={() => {
-                                        setState({
-                                            ...state,
-                                            id: 0,
-                                            name: "",
-                                            staff_no: "",
-                                            email: "",
-                                            grade_level_id: 0,
-                                            showForm: false,
-                                            isUpdating: false
-                                        })
+                                    <Button 
+                                        color="primary"
+                                        type="submit"
+                                    >
+                                        <FiUserPlus style={{ marginRight: 10 }}/>
+                                        {state.isUpdating ? 'Update' : 'Add'} Staff
+                                    </Button>
+                                    <Button 
+                                        color="secondary"
+                                        onClick={() => {
+                                            setState({
+                                                ...state,
+                                                id: 0,
+                                                name: "",
+                                                staff_no: "",
+                                                email: "",
+                                                grade_level_id: 0,
+                                                showForm: false,
+                                                isUpdating: false
+                                            })
 
-                                        setDepartments([])
-                                        setRoles([])
-                                    }}
-                                >
-                                    <FiX style={{ marginRight: 10 }} />
-                                    Close
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Form>
-                </div>
+                                            setDepartments([])
+                                            setRoles([])
+                                        }}
+                                    >
+                                        <FiX style={{ marginRight: 10 }} />
+                                        Close
+                                    </Button>
+                                </ButtonGroup>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </>
             : null}
 
-            <div className="card form-portal-card">
-                <Container fluid>
-                    <Row>
-                        <Col>
-                            <Table striped hover>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Staff Number</th>
-                                        <th>Email</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {props.access.staff.collection.length !== 0 ? props.access.staff.collection.map(employee => {
-                                        return (
-                                            <EmployeeWidget 
-                                                key={employee.id}
-                                                employee={employee}
-                                                onEdit={handleUpdate}
-                                                onDestroy={handleDestroy}
-                                            />
-                                        )
-                                    }) : (<tr><td>{'No Data Found!!!'}</td></tr>)}
-                                </tbody>
-                            </Table>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
+            
+            <Grid container spacing={3}>
+                <Grid item md={12}>
+
+                    <TableComponent 
+                        columns={columns}
+                        rows={staff}
+                        callToAction={handleUpdate}
+                        callToDelete={handleDestroy}
+                    />
+                </Grid>
+            </Grid>
+            
         </>
     )
 }

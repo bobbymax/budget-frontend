@@ -98,3 +98,7 @@ export const getPaymentType = code => {
     const type = code.substring(0, 2)
     return type === "SP" ? "STAFF PAYMENT" : "THIRD PARTY PAYMENT"
 }
+
+export const formatCurrency = fig => {
+    return `N ${new Intl.NumberFormat().format(fig)}`
+}

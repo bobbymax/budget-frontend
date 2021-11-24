@@ -8,13 +8,8 @@ import {
     FiPlus, 
     FiSend
 } from 'react-icons/fi'
-import {
-    Container,
-    Row,
-    Col,
-    Table,
-} from 'react-bootstrap'
-import GradeLevelWidget from '../../widgets/GradeLevelWidget'
+import { Grid, Button, TextField, ButtonGroup } from '@material-ui/core'
+import TableComponent from '../../../widgets/components/TableComponent'
 
 const GradeLevels = (props) => {
 
@@ -28,6 +23,17 @@ const GradeLevels = (props) => {
     }
 
     const [state, setState] = useState(initialState) 
+
+    const columns = [
+        {
+            name: 'Name',
+            label: 'name'
+        },
+        {
+            name: 'Code',
+            label: 'code'
+        }
+    ]
 
     const handleSubmit = e => {
         e.preventDefault()
@@ -105,98 +111,80 @@ const GradeLevels = (props) => {
     return (
         <>
             <h1>Grade Levels</h1>
-            <button 
-                type="button" 
-                className="btn btn-success" 
+            <Button 
+                variant="contained"
+                color="primary"
                 style={{ marginBottom: 30 }}
                 onClick={() => setState({...state, showForm: true})}
             >
                 <FiPlus style={{ marginRight: 8 }} />
                 Add Grade Level
-            </button>
+            </Button>
 
             {state.showForm ? 
-            <div className="card form-portal-card mb-5">
+            <div className="mb-5">
                 <form onSubmit={state.id !== 0 ? handleUpdateSubmit : handleSubmit}>
-                    <Row className="mb-5">
-                        <Col md={8}>
-                            <div className="form-group">
-                                <label htmlFor="gradeLevelName" className="mb-3">Grade Level Name</label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    className="form-control" 
-                                    placeholder="Enter Grade Level Name"
-                                    value={state.name}
-                                    onChange={(e) => setState({...state, name: e.target.value})}
-                                />
-                            </div>
-                        </Col>
-                        <Col md={4}>
-                            <div className="form-group">
-                                <label htmlFor="gradeLevelName" className="mb-3">Grade Level Code</label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    className="form-control" 
-                                    placeholder="Enter Code"
-                                    value={state.code}
-                                    onChange={(e) => setState({...state, code: e.target.value})}
-                                />
-                            </div>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md={4}>
-                            <button
-                                type="submit"
-                                className="btn btn-success"
-                            >
-                                <FiSend style={{ marginRight: 10 }} />
-                                {state.id !== 0 ? 'Update' : 'Add'} Grade Level
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-danger"
-                                onClick={() => setState({...state, showForm: false})}
-                            >
-                                <FiX style={{ marginRight: 10 }} />
-                                Close
-                            </button>
-                        </Col>
-                    </Row>
+                    <Grid container spacing={3} className="mb-3">
+                        <Grid item md={8}>
+                            <TextField 
+                                label="Grade Level Name"
+                                variant="outlined"
+                                value={state.name} 
+                                onChange={(e) => setState({...state, name: e.target.value})}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+                        <Grid item md={4}>
+                            <TextField 
+                                label="Grade Level Code"
+                                variant="outlined"
+                                value={state.code} 
+                                onChange={(e) => setState({...state, code: e.target.value})}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+
+                    </Grid>
+                    <Grid container spacing={3}>
+
+                        <Grid item md={12}>
+                            <ButtonGroup>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    <FiSend style={{ marginRight: 10 }} />
+                                    {state.id !== 0 ? 'Update' : 'Add'} Grade Level
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={() => setState({...state, showForm: false})}
+                                >
+                                    <FiX style={{ marginRight: 10 }} />
+                                    Close
+                                </Button>
+                            </ButtonGroup>
+                        </Grid>
+                    </Grid>
                 </form>
             </div>
             : null}
-            <div className="card form-portal-card">
-                <Container fluid>
-                    <Row>
-                        <Col>
-                            <Table striped hover>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Code</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {props.gradeLevels.collection.length !== 0 ? props.gradeLevels.collection.map(grade => {
-                                        return (
-                                            <GradeLevelWidget 
-                                                key={grade.id}
-                                                grade={grade}
-                                                onEdit={handleUpdate}
-                                                onDestroy={handleDestroy}
-                                            />
-                                        )
-                                    }) : (<tr><td colSpan="3" className="text-danger">{'NO DATA FOUND!!'}</td></tr>)}
-                                </tbody>
-                            </Table>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
+            
+            <Grid container spacing={3}>
+                <Grid item md={12}>
+                    <TableComponent 
+                        columns={columns}
+                        rows={props.gradeLevels.collection}
+                        callToAction={handleUpdate}
+                        callToDelete={handleDestroy}
+                    />
+                </Grid>
+            </Grid>
         </>
     )
 }

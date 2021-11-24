@@ -1,9 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import { FiSend } from 'react-icons/fi'
+import { makeStyles } from '@material-ui/core'
 import * as broadcast from '../../../redux/accessControl/types'
 import { connect } from 'react-redux'
 import { update } from '../../../redux/actions'
+import Grid from '@material-ui/core/Grid'
+import Typography from '@material-ui/core/Typography'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        flexGrow: 1
+    },
+    gaps: {
+        marginBottom: theme.spacing(3)
+    }
+}))
 
 export const BudgetHead = (props) => {
 
@@ -15,6 +28,7 @@ export const BudgetHead = (props) => {
     }
 
     const [state, setState] = useState(defaultState)
+    const classes = useStyles()
 
     useEffect(() => {
         if(props.location && props.location.state) {
@@ -46,48 +60,54 @@ export const BudgetHead = (props) => {
 
     return (
         <>
-            <div className="container-fluid">
-                <div className="row">
-                <h1 className="mb-5">Update Budget Head Details</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className="row mb-5">
-                        <div className="col-md-3">
-                            <div className="form-group">
-                                <label htmlFor="budgetId" className="mb-3">Budget ID</label>
-                                <input 
-                                    type="text" 
-                                    name="budgetId" 
-                                    className="form-control" 
-                                    id="budgetId" 
-                                    value={state.budgetId} 
-                                    onChange={(e) => setState({...state, budgetId: e.target.value})} 
-                                />
-                            </div>
-                        </div>
-                        <div className="col-md-9">
-                            <div className="form-group">
-                                <label htmlFor="name" className="mb-3">Budget Head</label>
-                                <input 
-                                    type="text" 
-                                    name="name" 
-                                    className="form-control" 
-                                    id="name" 
-                                    value={state.name} 
-                                    onChange={(e) => setState({...state, name: e.target.value})} 
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-3">
-                            <button type="submit" className="btn btn-success">
-                                <FiSend />
-                                <span style={{ marginLeft: 10 }}>Update Budget Head</span>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-                </div>
+            <div className={classes.root}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={12} md={12} lg={12} className={classes.gaps}>
+                        <Typography
+                            variant="h5"
+                            component="h2"
+                            color="textSecondary"
+                        >
+                            Update Budget Head Details
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                        <form onSubmit={handleSubmit}>
+
+                            <Grid container spacing={3}>
+                                <Grid item md={3}>
+                                    <TextField 
+                                        label="Budget ID"
+                                        variant="outlined"
+                                        value={state.budgetId} 
+                                        onChange={(e) => setState({...state, budgetId: e.target.value})} 
+                                        fullWidth
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item md={9}>
+                                    <TextField 
+                                        label="Budget Head"
+                                        variant="outlined"
+                                        value={state.name} 
+                                        onChange={(e) => setState({...state, name: e.target.value})} 
+                                        fullWidth
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item md={12}>
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        color="primary"
+                                    >
+                                        Update BH
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </form>
+                    </Grid>
+                </Grid>
             </div>
         </>
     )

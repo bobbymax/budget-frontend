@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import { Col, Row, Table, Button, Form, ButtonGroup } from 'react-bootstrap'
+import { Col, Row, Button, Form, ButtonGroup } from 'react-bootstrap'
 import { FiPlusSquare, FiSend, FiX } from 'react-icons/fi'
 import { connect } from 'react-redux'
 import { fetch, index, store, update } from '../../../redux/actions'
 import * as broadcast from '../../../redux/accessControl/types'
-import FundCard from '../../widgets/FundCard'
+import { Grid } from '@material-ui/core'
+import TableComponent from '../../../widgets/components/TableComponent'
 
 const Funds = (props) => {
 
@@ -23,6 +24,25 @@ const Funds = (props) => {
     }
 
     const [state, setState] = useState(initialState)
+
+    const columns = [
+        {
+            name: 'Budget Code',
+            label: 'budgetCode'
+        },
+        {
+            name: 'Sub Budget Head',
+            label: 'sub_budget_head_name'
+        },
+        {
+            name: 'Department',
+            label: 'department'
+        },
+        {
+            name: 'Approved Amount',
+            label: 'approved_amount'
+        }
+    ]
 
     const populateFields = data => {
         setState({
@@ -247,37 +267,17 @@ const Funds = (props) => {
                 </Form>
 
             : null }
-
-            <Row>
-                <Col>
-                    <Table striped bordered hover responsive>
-                        <thead>
-                            <tr>
-                                <th>Modify</th>
-                                <th>Budget Code</th>
-                                <th>Sub Budget Head</th>
-                                <th>Department</th>
-                                <th>Approved Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {props.funds.length > 0 ? props.funds.map(fund => {
-                                if (fund.budget_year === 2021) {
-                                    return (
-                                        <FundCard 
-                                            key={fund.id}
-                                            fund={fund}
-                                            onEdit={populateFields}
-                                        />
-                                    )
-                                } else {
-                                    return null
-                                }
-                            }) : <tr><td colSpan="7" className="text-danger">No Data Found!!</td></tr>}
-                        </tbody>
-                    </Table>
-                </Col>
-            </Row> 
+            
+            <Grid container spacing={3}>
+                <Grid item md={12}>
+                    <TableComponent 
+                        columns={columns}
+                        rows={props.funds}
+                        callToAction={populateFields}
+                        callToDelete={() => console.log('here')}
+                    />
+                </Grid>
+            </Grid>
         </>
     )
 }
