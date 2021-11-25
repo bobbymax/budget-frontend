@@ -37,7 +37,8 @@ export const Modules = (props) => {
         isAdministration: 0,
         generatePermissions: 0,
         showForm: false,
-        isUpdating: false
+        isUpdating: false,
+        type: ""
     }
 
     const [state, setState] = useState(initialState)
@@ -58,6 +59,8 @@ export const Modules = (props) => {
         }
     ]
 
+    const moduleTypes = ['application', 'module', 'page']
+
     const handleSubmit = e => {
         e.preventDefault()
 
@@ -70,6 +73,7 @@ export const Modules = (props) => {
             isAuthRequired: state.isAuthRequired,
             isAdministration: state.isAdministration,
             generatePermissions: state.generatePermissions,
+            type: state.type,
             departments: departments,
             roles: roles
         }
@@ -108,7 +112,8 @@ export const Modules = (props) => {
             isAdministration: 0,
             generatePermissions: 0,
             showForm: false,
-            isUpdating: false
+            isUpdating: false,
+            type: ""
         })
 
         setDepartments([])
@@ -127,6 +132,7 @@ export const Modules = (props) => {
             isAuthRequired: data.isAuthRequired,
             isAdministration: data.isAdministration,
             generatePermissions: data.generatePermissions,
+            type: data.type,
             showForm: true,
             isUpdating: true
         })
@@ -198,8 +204,8 @@ export const Modules = (props) => {
 
             {state.showForm ? 
                 <form onSubmit={handleSubmit} style={{ marginBottom: 30 }}>
-                    <Grid container spacing={3}>
-                        <Grid item md={3}>
+                    <Grid container spacing={3} style={{ marginBottom: 20 }}>
+                        <Grid item md={4}>
                             <TextField 
                                 variant="outlined"
                                 label="Module Name"
@@ -210,7 +216,7 @@ export const Modules = (props) => {
 
                             />
                         </Grid>
-                        <Grid item md={3}>
+                        <Grid item md={4}>
                             <TextField 
                                 variant="outlined"
                                 label="Pathname"
@@ -221,7 +227,7 @@ export const Modules = (props) => {
 
                             />
                         </Grid>
-                        <Grid item md={3}>
+                        <Grid item md={4}>
                             <TextField 
                                 variant="outlined"
                                 label="Module Component"
@@ -232,7 +238,7 @@ export const Modules = (props) => {
 
                             />
                         </Grid>
-                        <Grid item md={3}>
+                        <Grid item md={4}>
                             <FormControl variant="outlined" style={{ minWidth: '100%' }}>
                                 <InputLabel id="permissions">Generate Permissions?</InputLabel>
                                 <MuiSelect
@@ -249,9 +255,7 @@ export const Modules = (props) => {
                                 </MuiSelect>
                             </FormControl>
                         </Grid>
-                    </Grid>
-                    <Grid container spacing={3}>
-                        <Grid item md={3}>
+                        <Grid item md={4}>
                             <FormControl variant="outlined" style={{ minWidth: '100%' }}>
                                 <InputLabel id="parentId">Parent</InputLabel>
                                 <MuiSelect
@@ -263,14 +267,14 @@ export const Modules = (props) => {
                                     required
                                 >
                                     <MenuItem value="" disabled><em>Select Module Parent</em></MenuItem>
-                                    <MenuItem value="0"><em>No</em></MenuItem>
+                                    <MenuItem value="0"><em>None</em></MenuItem>
                                     {modules.map(module => (
                                         <MenuItem key={module.id} value={module.id}>{module.name}</MenuItem>
                                     ))}
                                 </MuiSelect>
                             </FormControl>
                         </Grid>
-                        <Grid item md={3}>
+                        <Grid item md={4}>
                             <FormControl variant="outlined" style={{ minWidth: '100%' }}>
                                 <InputLabel id="isMenu">Quick Access</InputLabel>
                                 <MuiSelect
@@ -287,7 +291,7 @@ export const Modules = (props) => {
                                 </MuiSelect>
                             </FormControl>
                         </Grid>
-                        <Grid item md={3}>
+                        <Grid item md={4}>
                             <FormControl variant="outlined" style={{ minWidth: '100%' }}>
                                 <InputLabel id="access">Access Level</InputLabel>
                                 <MuiSelect
@@ -304,7 +308,7 @@ export const Modules = (props) => {
                                 </MuiSelect>
                             </FormControl>
                         </Grid>
-                        <Grid item md={3}>
+                        <Grid item md={4}>
                             <FormControl variant="outlined" style={{ minWidth: '100%' }}>
                                 <InputLabel id="authorization">Authentication</InputLabel>
                                 <MuiSelect
@@ -321,40 +325,63 @@ export const Modules = (props) => {
                                 </MuiSelect>
                             </FormControl>
                         </Grid>
+
+                        <Grid item md={4}>
+                            <FormControl variant="outlined" style={{ minWidth: '100%' }}>
+                                <InputLabel id="moduleType">Module Type</InputLabel>
+                                <MuiSelect
+                                    labelId="moduleTypeLabel"
+                                    id="moduleType"
+                                    value={state.type}
+                                    onChange={e => setState({...state, type: e.target.value})}
+                                    label="Module Type"
+                                    required
+                                >
+                                    <MenuItem value="" disabled><em>Choose Module Type</em></MenuItem>
+                                    
+                                    {moduleTypes.map((mtyp, index) => (
+                                        <MenuItem key={index} value={mtyp}><em>{mtyp.toUpperCase()}</em></MenuItem>
+                                    ))}
+                                </MuiSelect>
+                            </FormControl>
+                        </Grid>
                     </Grid>
                     <Grid container spacing={3}>
-                        <Grid item md={6}>
-                            <Form.Group variant="outlined" style={{ minWidth: '100%' }}>
-                                <Form.Label>Departments</Form.Label>
-                                <Select 
-                                    components={makeAnimated()}
-                                    theme={customTheme}
-                                    options={filterDepts(fetchedDepartments)}
-                                    placeholder="Select Departments Access"
-                                    onChange={setDepartments}
-                                    value={departments}
-                                    isSearchable
-                                    isMulti
-                                    autoFocus
-                                />
-                            </Form.Group>
-                        </Grid>
-                        <Grid item md={6}>
-                            <Form.Group>
-                                <Form.Label>Roles</Form.Label>
-                                <Select 
-                                    components={makeAnimated()}
-                                    theme={customTheme}
-                                    options={filterDepts(fetchedRoles)}
-                                    placeholder="Select Roles Access"
-                                    onChange={setRoles}
-                                    value={roles}
-                                    isSearchable
-                                    isMulti
-                                    autoFocus
-                                />
-                            </Form.Group>
-                        </Grid>
+                        {state.type !== "" && state.type !== "page" ? 
+                            <Grid item md={12}>
+                                <Form.Group variant="outlined" style={{ minWidth: '100%' }}>
+                                    <Form.Label>Departments</Form.Label>
+                                    <Select 
+                                        components={makeAnimated()}
+                                        theme={customTheme}
+                                        options={filterDepts(fetchedDepartments)}
+                                        placeholder="Select Departments Access"
+                                        onChange={setDepartments}
+                                        value={departments}
+                                        isSearchable
+                                        isMulti
+                                        autoFocus
+                                    />
+                                </Form.Group>
+                            </Grid>
+                        :
+                            <Grid item md={12}>
+                                <Form.Group>
+                                    <Form.Label>Roles</Form.Label>
+                                    <Select 
+                                        components={makeAnimated()}
+                                        theme={customTheme}
+                                        options={filterDepts(fetchedRoles)}
+                                        placeholder="Select Roles Access"
+                                        onChange={setRoles}
+                                        value={roles}
+                                        isSearchable
+                                        isMulti
+                                        autoFocus
+                                    />
+                                </Form.Group>
+                            </Grid>
+                        }
                     </Grid>
                     <Grid container spacing={3}>
                         <Grid item md={12}>
@@ -384,7 +411,8 @@ export const Modules = (props) => {
                                         isAdministration: 0,
                                         generatePermissions: 0,
                                         showForm: false,
-                                        isUpdating: false
+                                        isUpdating: false,
+                                        type: ""
                                     })}
                                 >
                                     <FiX style={{ marginRight: 10 }} />

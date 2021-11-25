@@ -28,11 +28,21 @@ const App = () => {
         {routes.map((route, index) => {
           if (route.type === 'private') {
             return (
-              <PrivateRoute exact key={index} path={route.path} component={route.component} />
+              <PrivateRoute 
+                exact 
+                key={index} 
+                path={route.path} 
+                component={route.component} 
+              />
             )
           } else if (route.type === 'protected') {
             return (
-              <ProtectedRoute exact key={index} path={route.path} component={route.component} />
+              <ProtectedRoute 
+                exact 
+                key={index} 
+                path={route.path} 
+                component={route.component}
+              />
             )
           } else {
             return null
@@ -43,4 +53,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default App

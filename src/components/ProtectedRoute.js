@@ -261,7 +261,6 @@ const ProtectedRoute = ({component: Component, ...rest}) => {
                 </div>
                 <Divider />
                 <List>
-
                     {menuItems.map(item => {
                         if (item.children.length > 0) {
                             return (

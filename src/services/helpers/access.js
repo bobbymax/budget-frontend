@@ -1,23 +1,33 @@
 export const canAccessModule = (module, auth) => {
 
-    const roles = fetchRoles(auth)
-    const moduleRoles = fetchModuleRoles(module)
+    const roles = fetchLabels(auth)
+    const moduleRoles = fetchLabels(module)
 
     return moduleRoles.some(el => roles.includes(el))
 }
 
-export const fetchRoles = auth => {
-    let roles = []
+// export const fetchRoles = auth => {
+//     let roles = []
 
-    auth.roles.forEach(el => {
-        roles.push(el.label)
+//     auth.roles.forEach(el => {
+//         roles.push(el.label)
+//     })
+
+//     return roles
+// }
+
+export const fetchLabels = entity => {
+    let enty = []
+
+    entity.roles.forEach(el => {
+        enty.push(el.label)
     })
 
-    return roles
+    return enty
 }
 
 export const userHasRole = (auth, role) => {
-    const authRoles = fetchRoles(auth)
+    const authRoles = fetchLabels(auth)
     return authRoles.includes(role)
 }
 
@@ -28,12 +38,12 @@ export const grantAccessForBudgetClearing = (controller, owner) => {
     return false    
 }
 
-export const fetchModuleRoles = module => {
-    let moduleRoles = []
+// export const fetchModuleRoles = module => {
+//     let moduleRoles = []
 
-    module.roles.forEach(el => {
-        moduleRoles.push(el.label)
-    })
+//     module.roles.forEach(el => {
+//         moduleRoles.push(el.label)
+//     })
 
-    return moduleRoles
-}
+//     return moduleRoles
+// }
