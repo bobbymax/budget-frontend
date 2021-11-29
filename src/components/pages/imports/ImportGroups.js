@@ -33,6 +33,11 @@ const ImportGroups = props => {
             id: 4,
             label: 'Sub Budget Heads',
             value: 'sub-budget-heads'
+        },
+        {
+            id: 5,
+            label: 'Modules',
+            value: 'modules'
         }
     ]
 
@@ -49,11 +54,6 @@ const ImportGroups = props => {
         setCols([])
         setDataTypes("")
         setData([])
-
-        // console.log({
-        //     type: dataTypes,
-        //     data
-        // })
     }
 
     const getExtension = file => {

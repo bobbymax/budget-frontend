@@ -31,7 +31,8 @@ export const menuItems = [
         icon: <SubjectOutlined />,
         path: '/',
         parent: 0,
-        children: []
+        children: [],
+        type: "application"
     },
     {
         id: 2,

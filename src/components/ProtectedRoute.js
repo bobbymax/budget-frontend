@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-import React, {useState} from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect, useRef, useState} from 'react'
 import {
     Route,
     Redirect
@@ -9,34 +10,25 @@ import clsx from 'clsx'
 import { useTheme } from '@material-ui/core'
 import Drawer from '@material-ui/core/Drawer'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
 import Divider from '@material-ui/core/Divider'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import Collapse from '@material-ui/core/Collapse'
-import InputBase from '@material-ui/core/InputBase'
 import Badge from '@material-ui/core/Badge'
 import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
-import SearchIcon from '@material-ui/icons/Search'
 import MailIcon from '@material-ui/icons/Mail'
 import NotificationsIcon from '@material-ui/icons/Notifications'
-import ExpandLess from '@material-ui/icons/ExpandLess'
-import ExpandMore from '@material-ui/icons/ExpandMore'
 import Avatar from '@material-ui/core/Avatar'
-import MoreIcon from '@material-ui/icons/MoreVert'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useStyles } from '../assets/global'
 import { menuItems } from '../services/utils/menuItems'
 import logo from "../assets/images/old-logo.png"
+import Aside from '../commons/Aside'
+import Header from '../commons/Header'
+import Controllers from '../services/classes/Controllers'
+import { fetchAccessibleModules } from '../services/helpers/access'
 
 
 const ProtectedRoute = ({component: Component, ...rest}) => {
@@ -52,6 +44,10 @@ const ProtectedRoute = ({component: Component, ...rest}) => {
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null)
     const [openNested, setOpenNested] = useState(0)
     const [collapseNav, setCollapseNav] = useState(false)
+    const [loadedModules, setLoadedModules] = useState([])
+
+    const mounted = useRef(false)
+    
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
@@ -152,88 +148,29 @@ const ProtectedRoute = ({component: Component, ...rest}) => {
         </Menu>
     )
 
-    // const loadClasses = item => {
-    //     const active = location.pathname === item.path ? classes.active : null
-    //     return ({
-    //         active,
-    //         nested: classes.nested
-    //     })
-    // }
+    // useEffect(() => {
+    //     if (mounted.current === true) {
+    //         Controllers.index('modules')
+    //         .then(res => setLoadedModules(res.data.data))
+    //         .catch(err => err.message)
+    //     }
+    // }, [])
 
-    const nested = classes.nested
+    // console.log(loadedModules)
 
     return (
 
         <div className={classes.root}>
             <CssBaseline />
-            <AppBar
-                position="fixed"
-                className={clsx(classes.appBar, {
-                    [classes.appBarShift]: open,
-                })}
-            >
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
-                        className={clsx(classes.menuButton, open && classes.hide)}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" noWrap>
-                        NCDMB Budget Portal
-                    </Typography>
-                    <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                        <SearchIcon />
-                        </div>
-                        <InputBase
-                        placeholder="Search…"
-                        classes={{
-                            root: classes.inputRoot,
-                            input: classes.inputInput,
-                        }}
-                        inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </div>
-                    <div className={classes.grow} />
-                    <div className={classes.sectionDesktop}>
-                        <IconButton aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={4} color="secondary">
-                                <MailIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton aria-label="show 17 new notifications" color="inherit">
-                            <Badge badgeContent={17} color="secondary">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                        <Avatar
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            className={classes.avatar} 
-                            src="/fx.jpg"
-                            color="inherit"
-                        />
-                    </div>
-                    <div className={classes.sectionMobile}>
-                        <IconButton
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleMobileMenuOpen}
-                            color="inherit"
-                        >
-                            <MoreIcon />
-                        </IconButton>
-                    </div>
-                </Toolbar>
-            </AppBar>
+            <Header 
+                styling={classes}
+                drawerOpen={handleDrawerOpen}
+                open={open}
+                menuId={menuId}
+                mobileMenuId={mobileMenuId}
+                profileMenuOpen={handleProfileMenuOpen}
+                mobileMenuOpen={handleMobileMenuOpen}
+            />
             {renderMobileMenu}
             {renderMenu}
             <Drawer
@@ -260,64 +197,17 @@ const ProtectedRoute = ({component: Component, ...rest}) => {
                     </IconButton>
                 </div>
                 <Divider />
-                <List>
-                    {menuItems.map(item => {
-                        if (item.children.length > 0) {
-                            return (
-                                <div 
-                                    key={item.id}
-                                    component="nav"
-                                    aria-labelledby="nested-list-subheader"
-                                >
-                                    <ListItem
-                                        button
-                                        key={item.id}
-                                        onClick={() => handleClick(item.id)}
-                                        className={location.pathname === item.path ? classes.active : null}
-                                    >
-                                        <ListItemIcon>{item.icon}</ListItemIcon>
-                                        <ListItemText primary={item.text} />
-                                        {openNested === item.id && collapseNav ? <ExpandLess /> : <ExpandMore />}
-                                    </ListItem>
-                                    <Divider />
-                                    <Collapse in={openNested === item.id && collapseNav} timeout="auto" unmountOnExit>
-                                        <List component="div">
-                                            {item.children.map(child => (
-                                                <ListItem
-                                                    key={child.id}
-                                                    button
-                                                    className={`${location.pathname === child.path ? classes.active : null} ${classes.nested}`}
-                                                    onClick={() => history.push(child.path)}
-                                                >
-                                                    <ListItemIcon>
-                                                        {child.icon}
-                                                    </ListItemIcon>
-                                                    <ListItemText primary={child.text} />
-                                                </ListItem>
-                                            ))}
-                                        </List>
-                                    </Collapse>
-                                </div>
-                            )
-                        } else {
-                            return (
-                                <div
-                                    key={item.id}
-                                >
-                                    <ListItem
-                                        button
-                                        onClick={() => history.push(item.path)}
-                                        className={location.pathname === item.path ? classes.active : null}
-                                    >
-                                        <ListItemIcon>{item.icon}</ListItemIcon>
-                                        <ListItemText primary={item.text} />
-                                    </ListItem>
-                                    <Divider />
-                                </div>
-                            )
-                        }
-                    })}
-                </List>
+
+                <Aside 
+                    modules={fetchAccessibleModules(rest.modules, authenticated)} 
+                    auth={authenticated}
+                    pathname={location}
+                    activeState={classes}
+                    openNested={openNested}
+                    collapseNav={collapseNav}
+                    history={history}
+                    showSelected={handleClick}
+                />
             </Drawer>
             <main
                 className={clsx(classes.content, {

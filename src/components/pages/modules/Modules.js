@@ -38,7 +38,8 @@ export const Modules = (props) => {
         generatePermissions: 0,
         showForm: false,
         isUpdating: false,
-        type: ""
+        type: "",
+        icon: ""
     }
 
     const [state, setState] = useState(initialState)
@@ -56,6 +57,10 @@ export const Modules = (props) => {
         {
             name: 'Path',
             label: 'path'
+        },
+        {
+            name: 'Type',
+            label: 'type'
         }
     ]
 
@@ -74,6 +79,7 @@ export const Modules = (props) => {
             isAdministration: state.isAdministration,
             generatePermissions: state.generatePermissions,
             type: state.type,
+            icon: state.icon,
             departments: departments,
             roles: roles
         }
@@ -113,7 +119,8 @@ export const Modules = (props) => {
             generatePermissions: 0,
             showForm: false,
             isUpdating: false,
-            type: ""
+            type: "",
+            icon: ""
         })
 
         setDepartments([])
@@ -133,6 +140,7 @@ export const Modules = (props) => {
             isAdministration: data.isAdministration,
             generatePermissions: data.generatePermissions,
             type: data.type,
+            icon: data.icon,
             showForm: true,
             isUpdating: true
         })
@@ -238,7 +246,18 @@ export const Modules = (props) => {
 
                             />
                         </Grid>
-                        <Grid item md={4}>
+                        <Grid item md={3}>
+                            <TextField 
+                                variant="outlined"
+                                label="Module Icon"
+                                value={state.icon}
+                                onChange={e => setState({...state, icon: e.target.value})}
+                                fullWidth
+                                required
+
+                            />
+                        </Grid>
+                        <Grid item md={3}>
                             <FormControl variant="outlined" style={{ minWidth: '100%' }}>
                                 <InputLabel id="permissions">Generate Permissions?</InputLabel>
                                 <MuiSelect
@@ -255,7 +274,7 @@ export const Modules = (props) => {
                                 </MuiSelect>
                             </FormControl>
                         </Grid>
-                        <Grid item md={4}>
+                        <Grid item md={3}>
                             <FormControl variant="outlined" style={{ minWidth: '100%' }}>
                                 <InputLabel id="parentId">Parent</InputLabel>
                                 <MuiSelect
@@ -274,7 +293,7 @@ export const Modules = (props) => {
                                 </MuiSelect>
                             </FormControl>
                         </Grid>
-                        <Grid item md={4}>
+                        <Grid item md={3}>
                             <FormControl variant="outlined" style={{ minWidth: '100%' }}>
                                 <InputLabel id="isMenu">Quick Access</InputLabel>
                                 <MuiSelect

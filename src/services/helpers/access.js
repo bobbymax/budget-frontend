@@ -6,17 +6,57 @@ export const canAccessModule = (module, auth) => {
     return moduleRoles.some(el => roles.includes(el))
 }
 
-// export const fetchRoles = auth => {
-//     let roles = []
+const canAccessPage = (module, auth) => {
+    const depts = fetchDeptLabels(auth)
+    const moduleDepts = fetchDeptLabels(module)
 
-//     auth.roles.forEach(el => {
-//         roles.push(el.label)
-//     })
+    return moduleDepts.some(el => depts.includes(el))
+}
 
-//     return roles
-// }
+export const fetchAccessibleModules = (modules, auth) => {
+    const accessible = []
 
-export const fetchLabels = entity => {
+    modules.forEach(mod => {
+
+        if (auth.administrator) {
+            accessible.push(formatModules(mod))
+        } else {
+            if (mod.type === "page") {
+                if (canAccessModule(mod, auth)) accessible.push(formatModules(mod))
+            } else {
+                if (canAccessPage(mod, auth)) accessible.push(formatModules(mod))
+            }
+        }
+        
+    })
+
+    return accessible
+}
+
+const formatModules = mod => {
+    return {
+        id: mod.id,
+        text: mod.name,
+        path: mod.path,
+        parent: mod.parentId,
+        icon: mod.icon,
+        children: mod.children,
+        type: mod.type
+    }
+}
+
+const fetchDeptLabels = entity => {
+    let depts = []
+
+    entity.departments.forEach(el => {
+        depts.push(el.label)
+    })
+
+    return depts
+}
+
+
+const fetchLabels = entity => {
     let enty = []
 
     entity.roles.forEach(el => {
@@ -37,13 +77,3 @@ export const grantAccessForBudgetClearing = (controller, owner) => {
     }
     return false    
 }
-
-// export const fetchModuleRoles = module => {
-//     let moduleRoles = []
-
-//     module.roles.forEach(el => {
-//         moduleRoles.push(el.label)
-//     })
-
-//     return moduleRoles
-// }

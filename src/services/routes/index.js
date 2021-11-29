@@ -151,7 +151,7 @@ export const routes = [
     {
         title: 'Wages',
         type: 'protected',
-        path: '/benefits/wages',
+        path: '/benefit/wages',
         component: Prices
     },
     {
