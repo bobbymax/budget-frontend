@@ -1,8 +1,5 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useState } from 'react'
-// import { fetchAccessibleModules } from '../services/helpers/access'
-// import useNavigation from '../services/hooks/useNavigation'
+import React from 'react'
 import Divider from '@material-ui/core/Divider'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'

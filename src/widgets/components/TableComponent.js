@@ -15,7 +15,8 @@ import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Typography from '@material-ui/core/Typography'
 import SearchIcon from '@material-ui/icons/Search'
 import ImportExportIcon from '@material-ui/icons/ImportExport'
-import { formatCurrency } from '../../services/helpers/functions';
+import { formatCurrency } from '../../services/helpers/functions'
+import XLSX from 'xlsx'
 
 const useStyles = makeStyles(theme => ({
     tableContainer: {
@@ -60,6 +61,35 @@ const TableComponent = ({
         searchKeyword(e.target.value)
     }
 
+    const exportToExcel = () => {
+
+        const exportableData = rows.map(row => {
+            delete row.id
+            delete row.funds
+            delete row.department
+            delete row.budgetHead
+            delete row.fund
+            delete row.budget_head_id
+            delete row.department_id
+            delete row.totals
+
+            return row
+        })
+
+        const workSheet = XLSX.utils.json_to_sheet(exportableData)
+        const workBook = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(workBook, workSheet, "budget-overview")
+
+        // Buffer
+        // let buf = XLSX.write(workBook, {bookType: "xlsx", type: "buffer"})
+
+        // Binary String
+        XLSX.write(workBook, {bookType: "xlsx", type: "buffer"})
+
+        // Download File
+        XLSX.writeFile(workBook, "budgetOverview.xlsx")
+    }
+
     return (
             <>
 
@@ -89,6 +119,7 @@ const TableComponent = ({
                             color="primary"
                             style={{ float: 'right'}}
                             size="large"
+                            onClick={() => exportToExcel()}
                             fullWidth
                         >
                             <ImportExportIcon style={{ marginRight: 5  }} />
@@ -111,20 +142,14 @@ const TableComponent = ({
                                 </TableCell>
                             ))}
                             {callToAction !== null ? (<TableCell className={classes.tableHeaderCell}>{'Action'.toUpperCase()}</TableCell>) : null}
-                            
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                             <TableRow key={row.id}>
                                 {columns.map(column => (
-                                    <TableCell 
-                                        key={column.label}
-                                    >
-                                        <Typography
-                                            variant="body2"
-                                            className={classes.values}
-                                        >
+                                    <TableCell key={column.label}>
+                                        <Typography variant="body2" className={classes.values}>
                                             {column.type && column.type === 'currency' ?  formatCurrency(row[column.label]) : row[column.label]}
                                         </Typography>
                                     </TableCell>))}

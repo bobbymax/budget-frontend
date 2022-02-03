@@ -42,6 +42,10 @@ export const useStyles = makeStyles(theme => ({
         ...theme.mixins.toolbar,
         justifyContent: 'flex-end',
     },
+    avatarStyles: {
+        color: theme.palette.getContrastText(theme.palette.primary.main),
+        backgroundColor: theme.palette.primary.main
+    },
     content: {
         flexGrow: 1,
         padding: theme.spacing(3),

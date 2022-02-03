@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useState} from 'react'
 import {
     Route,
     Redirect
 } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import clsx from 'clsx'
 import { useTheme } from '@material-ui/core'
 import Drawer from '@material-ui/core/Drawer'
@@ -23,11 +22,9 @@ import NotificationsIcon from '@material-ui/icons/Notifications'
 import Avatar from '@material-ui/core/Avatar'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useStyles } from '../assets/global'
-import { menuItems } from '../services/utils/menuItems'
 import logo from "../assets/images/old-logo.png"
 import Aside from '../commons/Aside'
 import Header from '../commons/Header'
-import Controllers from '../services/classes/Controllers'
 import { fetchAccessibleModules } from '../services/helpers/access'
 
 
@@ -38,15 +35,13 @@ const ProtectedRoute = ({component: Component, ...rest}) => {
     const history = useHistory()
     const location = useLocation()
     const theme = useTheme()
+    const dispatch = useDispatch()
     
     const [open, setOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null)
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null)
     const [openNested, setOpenNested] = useState(0)
     const [collapseNav, setCollapseNav] = useState(false)
-    const [loadedModules, setLoadedModules] = useState([])
-
-    const mounted = useRef(false)
     
 
     const isMenuOpen = Boolean(anchorEl);
@@ -101,8 +96,19 @@ const ProtectedRoute = ({component: Component, ...rest}) => {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem 
+                onClick={() => {
+                    history.push('/profile')
+                }}
+            >
+                Profile
+            </MenuItem>
+            <MenuItem 
+                onClick={() => {
+                    dispatch({ type: 'LOGGED_OUT' })
+                    history.push('/login')
+                }
+            }>Log Out</MenuItem>
         </Menu>
     )
     const mobileMenuId = 'primary-search-account-menu-mobile'
@@ -147,16 +153,6 @@ const ProtectedRoute = ({component: Component, ...rest}) => {
             </MenuItem>
         </Menu>
     )
-
-    // useEffect(() => {
-    //     if (mounted.current === true) {
-    //         Controllers.index('modules')
-    //         .then(res => setLoadedModules(res.data.data))
-    //         .catch(err => err.message)
-    //     }
-    // }, [])
-
-    // console.log(loadedModules)
 
     return (
 

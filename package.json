@@ -6,6 +6,7 @@
     "@date-io/date-fns": "^2.11.0",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "@material-ui/pickers": "^3.3.10",
     "@popperjs/core": "^2.9.2",
     "@testing-library/jest-dom": "^5.11.4",
@@ -48,7 +49,7 @@
     "sweetalert2": "^11.1.7",
     "to-words": "^2.3.2",
     "web-vitals": "^1.0.1",
-    "xlsx": "^0.17.2"
+    "xlsx": "^0.17.5"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -24,6 +24,17 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <link rel="shortcut icon" href="%PUBLIC_URL%/assets/media/logos/favicon.ico" />
+		<!--begin::Fonts-->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+		<!--end::Fonts-->
+		<!--begin::Page Vendor Stylesheets(used by this page)-->
+		<link href="%PUBLIC_URL%/assets/plugins/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
+		<link href="%PUBLIC_URL%/assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+		<!--end::Page Vendor Stylesheets-->
+		<!--begin::Global Stylesheets Bundle(used by all pages)-->
+		<link href="%PUBLIC_URL%/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+		<link href="%PUBLIC_URL%/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
     <title>React App</title>
   </head>
   <body>
@@ -39,5 +50,21 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <!--begin::Global Javascript Bundle(used by all pages)-->
+		<script src="%PUBLIC_URL%/assets/plugins/global/plugins.bundle.js"></script>
+		<script src="%PUBLIC_URL%/assets/js/scripts.bundle.js"></script>
+		<!--end::Global Javascript Bundle-->
+		<!--begin::Page Vendors Javascript(used by this page)-->
+		<script src="%PUBLIC_URL%/assets/plugins/custom/fullcalendar/fullcalendar.bundle.js"></script>
+		<script src="%PUBLIC_URL%/assets/plugins/custom/datatables/datatables.bundle.js"></script>
+		<!--end::Page Vendors Javascript-->
+		<!--begin::Page Custom Javascript(used by this page)-->
+		<script src="%PUBLIC_URL%/assets/js/custom/widgets.js"></script>
+		<script src="%PUBLIC_URL%/assets/js/custom/apps/chat/chat.js"></script>
+		<script src="%PUBLIC_URL%/assets/js/custom/modals/upgrade-plan.js"></script>
+		<script src="%PUBLIC_URL%/assets/js/custom/modals/create-app.js"></script>
+		<script src="%PUBLIC_URL%/assets/js/custom/modals/users-search.js"></script>
+		<!--end::Page Custom Javascript-->
+		<!--end::Javascript-->
   </body>
 </html>

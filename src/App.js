@@ -11,6 +11,7 @@ import PrivateRoute from "./components/PrivateRoute"
 import {theme} from "./theme"
 import { routes } from "./services/routes"
 import Controllers from "./services/classes/Controllers"
+// import ProtectedOutlet from "./components/ProtectedOutlet"
 
 const App = () => {
 

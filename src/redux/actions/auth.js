@@ -7,10 +7,10 @@ import {
 } from '../accessControl/types'
 import Auth from '../../services/classes/Auth'
 
-export const login = (email, password) => dispatch => {
+export const login = (staff_no, password) => dispatch => {
     dispatch({type: LOADING_RESPONSE})
 
-    Auth.login(email, password)
+    Auth.login(staff_no, password)
     .then(res => {
         const data = res.data
 

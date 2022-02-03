@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -58,7 +59,7 @@ const Header = ({
                 </div>
                 <div className={styling.grow} />
                 <div className={styling.sectionDesktop}>
-                    <IconButton aria-label="show 4 new mails" color="inherit">
+                    {/* <IconButton aria-label="show 4 new mails" color="inherit">
                         <Badge badgeContent={4} color="secondary">
                             <MailIcon />
                         </Badge>
@@ -67,7 +68,7 @@ const Header = ({
                         <Badge badgeContent={17} color="secondary">
                             <NotificationsIcon />
                         </Badge>
-                    </IconButton>
+                    </IconButton> */}
                     <Avatar
                         edge="end"
                         aria-label="account of current user"

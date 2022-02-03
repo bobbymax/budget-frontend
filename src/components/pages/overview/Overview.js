@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Requests from '../../../services/classes/Requests'
 import { formatCurrency } from '../../../services/helpers/functions'
 import TableComponent from '../../../widgets/components/TableComponent'
+//import XLSX from 'xlsx'
 
 
 const columns = [
@@ -81,6 +82,21 @@ const Overview = props => {
     }
 
     // console.log(data)
+
+    // const exportToExcel = () => {
+    //     const workSheet = XLSX.utils.json_to_sheet(data)
+    //     const workBook = XLSX.utils.book_new()
+    //     XLSX.utils.book_append_sheet(workBook, workSheet, "budget-overview")
+
+    //     // Buffer
+    //     // let buf = XLSX.write(workBook, {bookType: "xlsx", type: "buffer"})
+
+    //     // Binary String
+    //     XLSX.write(workBook, {bookType: "xlsx", type: "buffer"})
+
+    //     // Download File
+    //     XLSX.writeFile(workBook, "budgetOverview.xlsx")
+    // }
 
     const handleChange = value => {
         if (value > 0) {

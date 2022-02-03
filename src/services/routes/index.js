@@ -32,6 +32,7 @@ import RefundRequests from "../../components/pages/refunds/RefundRequests";
 import Reversals from "../../components/pages/refunds/Reversals";
 import ImportGroups from "../../components/pages/imports/ImportGroups";
 import Overview from "../../components/pages/overview/Overview";
+import Profile from "../../components/pages/staff/Profile";
 
 export const routes = [
     {
@@ -262,4 +263,10 @@ export const routes = [
         path: '/overview',
         component: Overview
     },
+    {
+        title: 'Staff Profile',
+        type: 'protected',
+        path: '/profile',
+        component: Profile
+    }
 ]

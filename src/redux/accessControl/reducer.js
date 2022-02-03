@@ -64,6 +64,7 @@ const accessControlReducer = (state=initialState, action) => {
             }
         case actions.INVALID_CREDENTIALS :
         case actions.LOGIN_FAILURE : 
+        case actions.LOGGED_OUT :
             localStorage.removeItem('token')
             return {
                 ...state,

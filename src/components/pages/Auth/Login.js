@@ -8,7 +8,7 @@ import { login } from "../../../redux/actions/auth"
 const Login = (props) => {
 
     const initialState = {
-        email: "",
+        staff_no: "",
         password: ""
     }
 
@@ -16,7 +16,7 @@ const Login = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        props.login(state.email, state.password)
+        props.login(state.staff_no, state.password)
     }
 
     return (
@@ -34,14 +34,13 @@ const Login = (props) => {
                             <Col md={4} className="align-me">
                                 <Form onSubmit={handleSubmit}>
                                     <Form.Group className="mb-3">
-                                        <Form.Label>Email Address</Form.Label>
+                                        <Form.Label>Staff Number</Form.Label>
                                         <Form.Control
                                             size="lg"
-                                            type="email"
-                                            name="email"
-                                            placeholder="Enter Email Address"
-                                            value={ state.email } 
-                                            onChange={e => setState({ ...state, email: e.target.value })}
+                                            name="staff_no"
+                                            placeholder="Enter Staff Numner"
+                                            value={ state.staff_no } 
+                                            onChange={e => setState({ ...state, staff_no: e.target.value })}
                                         />
                                     </Form.Group>
                                     <Form.Group className="mb-5">
@@ -79,7 +78,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        login: (email, password) => dispatch(login(email, password))
+        login: (staff_no, password) => dispatch(login(staff_no, password))
     }
 }
 
